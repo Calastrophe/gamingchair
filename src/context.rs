@@ -9,13 +9,13 @@ const PROCESS_NAME: &str = if cfg!(target_os = "windows") {
 const CLIENT_MODULE: &str = if cfg!(target_os = "windows") {
     "client.dll"
 } else {
-    "client.so"
+    "libclient.so"
 };
 
 const ENGINE_MODULE: &str = if cfg!(target_os = "windows") {
     "engine2.dll"
 } else {
-    "engine2.so"
+    "libengine2.so"
 };
 
 pub struct Context {

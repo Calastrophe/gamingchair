@@ -9,17 +9,11 @@ use clap::Parser;
 use context::Context;
 use memflow::prelude::v1::*;
 
-const OS: &str = if cfg!(target_os = "windows") {
-    "win32"
-} else {
-    "linux"
-};
-
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Arguments {
     #[arg(short, long)]
-    connector: String,
+    connector: Option<String>,
 }
 
 fn main() -> eframe::Result {
@@ -37,14 +31,19 @@ fn main() -> eframe::Result {
     let args = Arguments::parse();
 
     let inventory = Inventory::scan();
-    let os = inventory
-        .builder()
-        .connector(&args.connector)
-        .os(OS)
-        .build()
-        .unwrap();
 
-    let context = Context::new(os);
+    let os_instance = if let Some(connector) = args.connector {
+        inventory
+            .builder()
+            .connector(&connector)
+            .os("native")
+            .build()
+    } else {
+        inventory.builder().os("native").build()
+    }
+    .unwrap();
+
+    let context = Context::new(os_instance);
 
     eframe::run_native(
         "eframe template",
