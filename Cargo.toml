@@ -1,0 +1,14 @@
+[package]
+name = "cs2_radar"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+eframe = { version = "0.31.1", features = ["x11", "glow"] }
+egui = "0.31.1"
+egui_extras = { version = "0.31.1", features = ["image"] }
+env_logger = "0.11.8"
+image = { version = "0.25.6", features = ["png"] }
+log = "0.4.27"
+memflow = "0.2.3"
