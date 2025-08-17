@@ -20,14 +20,15 @@ struct Arguments {
 fn main() -> eframe::Result {
     use crate::radar::Radar;
 
+    //init logger
     let mut builder = Builder::new();
-
     builder
         .filter(None, log::LevelFilter::Info)
         .write_style(WriteStyle::Always)
         .init();
 
     color_eyre::install().unwrap();
+
     log::info!("Starting cs2 radar!");
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
@@ -44,9 +45,10 @@ fn main() -> eframe::Result {
         inventory
             .builder()
             .connector(&connector)
-            .os("native")
+            .os("win32")
             .build()
     } else {
+        panic!("Cant find the connector!");
         inventory.builder().os("native").build()
     }
     .unwrap();

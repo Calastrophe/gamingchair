@@ -34,17 +34,17 @@ impl Map {
 
     pub fn image(&self) -> Image<'_> {
         let img_src = match self {
-            Self::Italy => egui::include_image!("../../assets/italy.png"),
-            Self::Office => egui::include_image!("../../assets/office.png"),
-            Self::Ancient => egui::include_image!("../../assets/ancient.png"),
-            Self::Anubis => egui::include_image!("../../assets/anubis.png"),
-            Self::Dust2 => egui::include_image!("../../assets/dust2.png"),
-            Self::Inferno => egui::include_image!("../../assets/inferno.png"),
-            Self::Mirage => egui::include_image!("../../assets/mirage.png"),
-            Self::Nuke => egui::include_image!("../../assets/nuke.png"),
-            Self::Overpass => egui::include_image!("../../assets/overpass.png"),
-            Self::Train => egui::include_image!("../../assets/train.png"),
-            Self::Vertigo => egui::include_image!("../../assets/vertigo.png"),
+            Self::Italy => egui::include_image!("../../assets/maps/italy.png"),
+            Self::Office => egui::include_image!("../../assets/maps/office.png"),
+            Self::Ancient => egui::include_image!("../../assets/maps/ancient.png"),
+            Self::Anubis => egui::include_image!("../../assets/maps/anubis.png"),
+            Self::Dust2 => egui::include_image!("../../assets/maps/dust2.png"),
+            Self::Inferno => egui::include_image!("../../assets/maps/inferno.png"),
+            Self::Mirage => egui::include_image!("../../assets/maps/mirage.png"),
+            Self::Nuke => egui::include_image!("../../assets/maps/nuke.png"),
+            Self::Overpass => egui::include_image!("../../assets/maps/overpass.png"),
+            Self::Train => egui::include_image!("../../assets/maps/train.png"),
+            Self::Vertigo => egui::include_image!("../../assets/maps/vertigo.png"),
         };
 
         Image::new(img_src).bg_fill(Rgba::TRANSPARENT)

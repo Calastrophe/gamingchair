@@ -6,9 +6,10 @@ edition = "2024"
 [dependencies]
 clap = { version = "4.5.40", features = ["derive"] }
 color-eyre = "0.6.5"
-eframe = { version = "0.31.1", features = ["x11", "glow"] }
-egui = "0.31.1"
-egui_extras = { version = "0.31.1", features = ["image"] }
+eframe = "0.32.1"
+
+egui = "0.32.1"
+egui_extras = { version = "0.32.1", features = ["image", "svg", "svg_text"] }
 env_logger = "0.11.8"
 image = { version = "0.25.6", features = ["png"] }
 log = "0.4.27"
