@@ -7,6 +7,7 @@ mod radar;
 
 use clap::Parser;
 use context::Context;
+use env_logger::{Builder, WriteStyle};
 use memflow::prelude::v1::*;
 
 #[derive(Parser, Debug)]
@@ -19,8 +20,15 @@ struct Arguments {
 fn main() -> eframe::Result {
     use crate::radar::Radar;
 
-    env_logger::init();
+    let mut builder = Builder::new();
 
+    builder
+        .filter(None, log::LevelFilter::Info)
+        .write_style(WriteStyle::Always)
+        .init();
+
+    color_eyre::install().unwrap();
+    log::info!("Starting cs2 radar!");
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([400.0, 300.0])

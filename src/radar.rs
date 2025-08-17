@@ -1,4 +1,5 @@
 mod maps;
+mod player;
 
 use egui::{Color32, Stroke};
 use maps::Map;
@@ -18,13 +19,7 @@ impl Radar {
 
 impl eframe::App for Radar {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        // Perform reads to see current map, player positions and view angles.
-
-        // TODO:
-        // if self.map.as_ref() != Some(&new_map) {
-        //  self.map = Some(new_map);
-        // }
-
+        // Perform the read of any data that we need.
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(map) = self.map {
                 let response = ui.add(map.image());

@@ -1,4 +1,5 @@
-// We need the offset for the entity list, we should also differentiate between team and enemy.
-//
-//
-// Lastly, we should have an offset for determining the current map.
+mod client_module;
+mod engine2_module;
+mod offsets;
+
+pub use offsets::cs2_dumper::offsets::{client_dll, engine2_dll};
