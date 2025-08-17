@@ -1,4 +1,5 @@
 mod maps;
+mod reader;
 
 use egui::{Color32, Stroke};
 use maps::Map;
@@ -19,7 +20,7 @@ impl Radar {
 impl eframe::App for Radar {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         // Perform the read of any data that we need.
-
+        let map = Some(Map::Inferno);
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(map) = self.map {
                 let response = ui.add(map.image());
