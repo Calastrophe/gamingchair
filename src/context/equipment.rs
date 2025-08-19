@@ -2,6 +2,7 @@ use egui::{Image, Rgba};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Equipment {
+<<<<<<< HEAD
     AK47,
     AUG,
     AWP,
@@ -48,11 +49,60 @@ pub enum Equipment {
     UMP45,
     USPS,
     XM1014,
+=======
+    Unknown = 0,   
+    Deagle = 1,
+    Dualies = 2,
+    Fiveseven = 3,
+    Glock = 4,
+    AK47 = 7,
+    AUG = 8,
+    AWP = 9,
+    FAMAS = 10,
+    G3GS1 = 11,
+    Galil = 13,
+    M249 = 14,
+    M4A4 = 16,
+    MAC10 = 17,
+    P90 = 19,
+    UMP45 = 24,
+    MP5SD = 23,
+    XM1014 = 25,
+    Bizon = 26,
+    MAG7 = 27,
+    Negev = 28,
+    SawedOff = 29,
+    Tec9 = 30,
+    Zeus = 31,
+    P2000 = 32,
+    MP7 = 33,
+    MP9 = 34,
+    Nova = 35,
+    P250 = 36,
+    SCAR20 = 38,
+    SG556 = 39,
+    SSG08 = 40,
+    Flashbang = 43,
+    HE = 44,
+    Smoke = 45,
+    Molotov = 46,
+    Decoy = 47,
+    Incendiary = 48,
+    C4 = 49,
+    M4A1S = 60,
+    USPS = 61,
+    CZ75 = 63,
+    Revolver = 64,
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
 }
 
 impl Equipment {
     pub fn as_str(&self) -> &'static str {
         match self {
+<<<<<<< HEAD
+=======
+            Equipment::Unknown => "unknown",
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
             Equipment::AK47 => "ak47",
             Equipment::AUG => "aug",
             Equipment::AWP => "awp",
@@ -61,6 +111,7 @@ impl Equipment {
             Equipment::CZ75 => "cz75a",
             Equipment::Deagle => "deagle",
             Equipment::Decoy => "decoy",
+<<<<<<< HEAD
             Equipment::DefuseKit => "defuser",
             Equipment::Dualies => "elite",
             Equipment::FAMAS => "famas",
@@ -77,6 +128,20 @@ impl Equipment {
             Equipment::M249 => "m249",
             Equipment::M4A1S => "m4a1_silencer",
             Equipment::M4A1 => "m4a1",
+=======
+            Equipment::Dualies => "dualies",
+            Equipment::FAMAS => "famas",
+            Equipment::Fiveseven => "fiveseven",
+            Equipment::Flashbang => "flashbang",
+            Equipment::G3GS1 => "g3sg1",
+            Equipment::Galil => "galilar",
+            Equipment::Glock => "glock",
+            Equipment::HE => "hegrenade",
+            Equipment::Incendiary => "incgrenade",
+            Equipment::M249 => "m249",
+            Equipment::M4A1S => "m4a1_silencer",
+            Equipment::M4A4 => "m4a4",
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
             Equipment::MAC10 => "mac10",
             Equipment::MAG7 => "mag7",
             Equipment::Molotov => "molotov",
@@ -104,6 +169,10 @@ impl Equipment {
 
     pub fn image(&self) -> Image<'_> {
         let img_src = match self {
+<<<<<<< HEAD
+=======
+            Equipment::Unknown => egui::include_image!("../../assets/equipment/unknown.svg"),
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
             Equipment::AK47 => egui::include_image!("../../assets/equipment/ak47.svg"),
             Equipment::AUG => egui::include_image!("../../assets/equipment/aug.svg"),
             Equipment::AWP => egui::include_image!("../../assets/equipment/awp.svg"),
@@ -112,6 +181,7 @@ impl Equipment {
             Equipment::CZ75 => egui::include_image!("../../assets/equipment/cz75a.svg"),
             Equipment::Deagle => egui::include_image!("../../assets/equipment/deagle.svg"),
             Equipment::Decoy => egui::include_image!("../../assets/equipment/decoy.svg"),
+<<<<<<< HEAD
             Equipment::DefuseKit => egui::include_image!("../../assets/equipment/defuser.svg"),
             Equipment::Dualies => egui::include_image!("../../assets/equipment/elite.svg"),
             Equipment::FAMAS => egui::include_image!("../../assets/equipment/famas.svg"),
@@ -128,6 +198,19 @@ impl Equipment {
             Equipment::M249 => egui::include_image!("../../assets/equipment/m249.svg"),
             Equipment::M4A1S => egui::include_image!("../../assets/equipment/m4a1_silencer.svg"),
             Equipment::M4A1 => egui::include_image!("../../assets/equipment/m4a1.svg"),
+=======
+            Equipment::FAMAS => egui::include_image!("../../assets/equipment/famas.svg"),
+            Equipment::Fiveseven => egui::include_image!("../../assets/equipment/fiveseven.svg"),
+            Equipment::Flashbang => egui::include_image!("../../assets/equipment/flashbang.svg"),
+            Equipment::G3GS1 => egui::include_image!("../../assets/equipment/g3sg1.svg"),
+            Equipment::Galil => egui::include_image!("../../assets/equipment/galilar.svg"),
+            Equipment::Glock => egui::include_image!("../../assets/equipment/glock.svg"),
+            Equipment::HE => egui::include_image!("../../assets/equipment/hegrenade.svg"),
+            Equipment::Incendiary => egui::include_image!("../../assets/equipment/incgrenade.svg"),
+            Equipment::M249 => egui::include_image!("../../assets/equipment/m249.svg"),
+            Equipment::M4A1S => egui::include_image!("../../assets/equipment/m4a1_silencer.svg"),
+            Equipment::M4A4 => egui::include_image!("../../assets/equipment/m4a1.svg"),
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
             Equipment::MAC10 => egui::include_image!("../../assets/equipment/mac10.svg"),
             Equipment::MAG7 => egui::include_image!("../../assets/equipment/mag7.svg"),
             Equipment::Molotov => egui::include_image!("../../assets/equipment/molotov.svg"),
@@ -144,16 +227,28 @@ impl Equipment {
             Equipment::SCAR20 => egui::include_image!("../../assets/equipment/scar20.svg"),
             Equipment::SG556 => egui::include_image!("../../assets/equipment/sg556.svg"),
             Equipment::Smoke => {
+<<<<<<< HEAD
                 egui::include_image!("../../assets/equipment/smokegrenade.svg")
             }
+=======
+                        egui::include_image!("../../assets/equipment/smokegrenade.svg")
+                    }
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
             Equipment::SSG08 => egui::include_image!("../../assets/equipment/ssg08.svg"),
             Equipment::Zeus => egui::include_image!("../../assets/equipment/taser.svg"),
             Equipment::Tec9 => egui::include_image!("../../assets/equipment/tec9.svg"),
             Equipment::UMP45 => egui::include_image!("../../assets/equipment/ump45.svg"),
             Equipment::USPS => {
+<<<<<<< HEAD
                 egui::include_image!("../../assets/equipment/usp_silencer.svg")
             }
             Equipment::XM1014 => egui::include_image!("../../assets/equipment/xm1014.svg"),
+=======
+                        egui::include_image!("../../assets/equipment/usp_silencer.svg")
+                    }
+            Equipment::XM1014 => egui::include_image!("../../assets/equipment/xm1014.svg"),
+            Equipment::Dualies => egui::include_image!("../../assets/equipment/elite.svg"),
+>>>>>>> 105889d67bb30f95289f850490399a260b23ad29
         };
 
         Image::new(img_src).bg_fill(Rgba::TRANSPARENT)
