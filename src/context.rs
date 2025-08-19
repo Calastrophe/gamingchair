@@ -101,7 +101,6 @@ impl Context {
         {
             let mut batcher = self.process.batcher();
             let ent_list = Address::from(self.entity_list);
-
             list_entries
                 .iter_mut()
                 .enumerate()

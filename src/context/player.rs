@@ -8,7 +8,7 @@ use teamid::TeamID;
 pub mod relation;
 mod teamid;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Player {
     controller: Address,
     pawn: Address,
