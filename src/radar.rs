@@ -1,5 +1,4 @@
 use crate::{Context, context::player::relation::Relation};
-use color_eyre::owo_colors::OwoColorize;
 use egui::{Color32, Stroke};
 
 pub struct Radar {
@@ -13,34 +12,25 @@ impl Radar {
 }
 
 impl eframe::App for Radar {
-    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
-        egui::Rgba::TRANSPARENT.to_array()
-    }
-
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
-        ctx.send_viewport_cmd(egui::ViewportCommand::WindowLevel(
-            egui::WindowLevel::AlwaysOnTop,
-        ));
-
         self.context.update();
         ctx.request_repaint();
 
-        // Perform the read of any data that we need.
-        egui::CentralPanel::default()
-            .frame(egui::containers::Frame::NONE)
-            .show(ctx, |ui| {
-                if let Some(image) = self.context.map.image() {
-                    let (zero_x, zero_y) = self.context.map.zeroing();
-                    let scale = self.context.map.scale();
+        egui::CentralPanel::default().show(ctx, |ui| {
+            if let Some(image) = self.context.map.image() {
+                let (zero_x, zero_y) = self.context.map.zeroing();
+                let scale = self.context.map.scale();
+                let img_scaling = ui.add(image).rect.bottom() / 1024.0;
+                let painter = ui.painter();
 
-                    let response = ui.add(image);
-                    let painter = ui.painter();
-
-                    let img_scaling = response.rect.bottom() / 1024.0;
-
-                    for player in self.context.players() {
-                        let pos_x = ((player.position.x - zero_x) / scale) * img_scaling;
-                        let pos_y = ((player.position.y - zero_y) / -scale) * img_scaling;
+                self.context
+                    .players()
+                    .filter(|p| p.health > 0)
+                    .for_each(|player| {
+                        let (pos_x, pos_y) = (
+                            ((player.position.x - zero_x) / scale) * img_scaling,
+                            ((player.position.y - zero_y) / -scale) * img_scaling,
+                        );
 
                         let color = match player.relation {
                             Relation::Unknown | Relation::Spectator => Color32::GRAY,
@@ -55,8 +45,19 @@ impl eframe::App for Radar {
                             color,
                             Stroke::new(1.0, Color32::WHITE),
                         );
-                    }
-                }
-            });
+
+                        let yaw_radians = player.yaw.to_radians();
+                        let line_length = 8.0 * img_scaling;
+
+                        let end_x = pos_x + line_length * yaw_radians.cos();
+                        let end_y = pos_y - line_length * yaw_radians.sin();
+
+                        painter.line_segment(
+                            [(pos_x, pos_y).into(), (end_x, end_y).into()],
+                            Stroke::new(3.0, Color32::WHITE),
+                        );
+                    });
+            }
+        });
     }
 }
