@@ -9,7 +9,7 @@ use crate::offsets::{
 
 mod equipment;
 mod maps;
-mod player;
+pub mod player;
 mod vec3;
 
 pub const CURRENT_MAP: u64 = 0x180;
@@ -22,7 +22,7 @@ pub struct Context {
     globals: u64,
     entity_list: u64,
 
-    local_player: Player,
+    pub local_player: Player,
     pub players: Vec<Player>,
     pub map: Map,
 }
@@ -45,6 +45,12 @@ impl Context {
             players: Vec::new(),
             map: Map::Empty,
         }
+    }
+
+    pub fn players(&self) -> impl Iterator<Item = &Player> {
+        self.players
+            .iter()
+            .chain(std::iter::once(&self.local_player))
     }
 
     pub fn update(&mut self) {

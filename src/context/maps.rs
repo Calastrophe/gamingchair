@@ -20,7 +20,7 @@ pub enum Map {
 impl From<&str> for Map {
     fn from(value: &str) -> Self {
         match value {
-            "de_ancient" => Map::Ancient,
+            "de_ancient" | "de_ancient_night" => Map::Ancient,
             "de_anubis" => Map::Anubis,
             "de_dust2" => Map::Dust2,
             "de_inferno" => Map::Inferno,
@@ -54,5 +54,39 @@ impl Map {
         };
 
         Some(Image::new(img_src).bg_fill(Rgba::TRANSPARENT))
+    }
+
+    pub fn zeroing(&self) -> (f32, f32) {
+        match self {
+            Self::Empty => (0.0, 0.0),
+            Self::Ancient => (-2953.0, 2164.0),
+            Self::Anubis => (-2796.0, 3328.0),
+            Self::Dust2 => (-2476.0, 3239.0),
+            Self::Inferno => (-2087.0, 3870.0),
+            Self::Italy => (-2647.0, 2592.0),
+            Self::Mirage => (-3230.0, 1713.0),
+            Self::Nuke => (-3453.0, 2887.0),
+            Self::Office => (-1838.0, 1858.0),
+            Self::Overpass => (-4831.0, 1781.0),
+            Self::Train => (-2308.0, 2078.0),
+            Self::Vertigo => (-3168.0, 1762.0),
+        }
+    }
+
+    pub fn scale(&self) -> f32 {
+        match self {
+            Self::Empty => 0.0,
+            Self::Ancient => 5.0,
+            Self::Anubis => 5.22,
+            Self::Dust2 => 4.400000095367432,
+            Self::Inferno => 4.9,
+            Self::Italy => 4.6,
+            Self::Mirage => 5.0,
+            Self::Nuke => 7.0,
+            Self::Office => 4.1,
+            Self::Overpass => 5.2,
+            Self::Train => 4.082077,
+            Self::Vertigo => 4.0,
+        }
     }
 }
