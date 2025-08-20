@@ -29,7 +29,11 @@ fn main() -> eframe::Result {
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([400.0, 300.0])
-            .with_min_inner_size([300.0, 220.0]),
+            .with_min_inner_size([300.0, 220.0])
+            .with_transparent(true)
+            .with_decorations(false)
+            .with_fullscreen(true)
+            .with_mouse_passthrough(true),
         ..Default::default()
     };
 
