@@ -14,6 +14,7 @@ impl Radar {
 impl eframe::App for Radar {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
         self.context.update();
+        ctx.request_repaint();
 
         // Perform the read of any data that we need.
         egui::CentralPanel::default().show(ctx, |ui| {

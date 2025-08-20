@@ -49,7 +49,6 @@ pub enum Equipment {
 impl From<i32> for Equipment {
     fn from(value: i32) -> Self {
         match value {
-            0 => Equipment::Unknown,
             1 => Equipment::Deagle,
             2 => Equipment::Dualies,
             3 => Equipment::Fiveseven,
@@ -92,7 +91,7 @@ impl From<i32> for Equipment {
             61 => Equipment::USPS,
             63 => Equipment::CZ75,
             64 => Equipment::Revolver,
-            _ => Equipment::Unknown, // Default case for unknown values
+            _ => Equipment::Unknown,
         }
     }
 }

@@ -6,7 +6,7 @@ use relation::Relation;
 use teamid::TeamID;
 
 pub mod relation;
-mod teamid;
+pub mod teamid;
 
 #[derive(Default, Debug)]
 pub struct Player {
@@ -15,7 +15,7 @@ pub struct Player {
     pub health: u32,
     pub position: Vec3,
     pub yaw: f32,
-    team_id: TeamID,
+    pub team_id: TeamID,
     pub relation: Relation,
 }
 
@@ -44,7 +44,7 @@ impl Player {
                 &mut player.position,
             );
             batcher.read_into(
-                pawn + offsets::client::C_CSPlayerPawnBase::m_angEyeAngles + 4,
+                pawn + offsets::client::C_CSPlayerPawn::m_angEyeAngles + 4,
                 &mut player.yaw,
             );
             batcher.read_into(

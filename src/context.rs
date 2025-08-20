@@ -1,6 +1,6 @@
 use maps::Map;
 use memflow::prelude::v1::*;
-use player::{Player, relation::Relation};
+use player::{Player, relation::Relation, teamid::TeamID};
 
 use crate::offsets::{
     self,
@@ -12,7 +12,7 @@ mod maps;
 mod player;
 mod vec3;
 
-pub const CURRENT_MAP: u64 = 0x1B8;
+pub const CURRENT_MAP: u64 = 0x180;
 
 pub struct Context {
     process: IntoProcessInstanceArcBox<'static>,
@@ -97,10 +97,10 @@ impl Context {
 
     pub fn update_players(&mut self) {
         let mut list_entries = [0u64; 64];
+        let ent_list = Address::from(self.entity_list);
 
         {
             let mut batcher = self.process.batcher();
-            let ent_list = Address::from(self.entity_list);
             list_entries
                 .iter_mut()
                 .enumerate()
@@ -141,13 +141,64 @@ impl Context {
                 })
         }
 
+        let mut entity_list = [0u64; 64];
+
+        {
+            let mut batcher = self.process.batcher();
+            entity_list
+                .iter_mut()
+                .enumerate()
+                .skip(1)
+                .for_each(|(idx, data)| {
+                    batcher.read_into(ent_list + (8 * ((pawns[idx] & 0x7FFF) >> 9) + 16), data);
+                })
+        }
+
+        let mut actual_pawns = [0u64; 64];
+
+        {
+            let mut batcher = self.process.batcher();
+            actual_pawns
+                .iter_mut()
+                .enumerate()
+                .skip(1)
+                .for_each(|(idx, data)| {
+                    let list_entry: Address = entity_list[idx].into();
+                    batcher.read_into(list_entry + (120) * (pawns[idx] & 0x1FF), data);
+                })
+        }
+
         self.players = controllers
             .iter()
-            .zip(pawns.iter())
-            .map(|(controller, pawn)| (Address::from(*controller), Address::from(*pawn)))
-            .filter(|(controller, pawn)| !controller.is_null() && !pawn.is_null())
-            .map(|(controller, pawn)| Player::read(&mut self.process, controller, pawn))
-            .filter(|player| *player != self.local_player)
+            .zip(actual_pawns.iter())
+            .filter_map(|(controller, pawn)| {
+                let controller_addr = Address::from(*controller);
+                let pawn_addr = Address::from(*pawn);
+
+                if controller_addr.is_null() || pawn_addr.is_null() {
+                    None
+                } else {
+                    Some((controller_addr, pawn_addr))
+                }
+            })
+            .filter_map(|(controller, pawn)| {
+                let player = Player::read(&mut self.process, controller, pawn);
+
+                if player == self.local_player {
+                    None
+                } else {
+                    Some(player)
+                }
+            })
+            .map(|mut player| {
+                player.relation = match player.team_id {
+                    TeamID::Unknown => Relation::Unknown,
+                    TeamID::Spectator => Relation::Spectator,
+                    _ if self.local_player.team_id == player.team_id => Relation::Teammate,
+                    _ => Relation::Enemy,
+                };
+                player
+            })
             .collect();
     }
 }

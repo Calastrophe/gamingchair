@@ -1,5 +1,5 @@
 // Generated using https://github.com/a2x/cs2-dumper
-// 2025-08-14 21:08:30.051873234 UTC
+// 2025-08-18 23:52:47.183323500 UTC
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, unused)]
 
@@ -15,7 +15,7 @@ pub mod cs2_dumper {
             pub enum EntityDormancyType_t {
                 ENTITY_NOT_DORMANT = 0x0,
                 ENTITY_DORMANT = 0x1,
-                ENTITY_SUSPENDED = 0x2,
+                ENTITY_SUSPENDED = 0x2
             }
             // Alignment: 4
             // Member count: 4
@@ -24,11 +24,12 @@ pub mod cs2_dumper {
                 ENTITY_IO_TARGET_INVALID = u32::MAX,
                 ENTITY_IO_TARGET_ENTITYNAME = 0x2,
                 ENTITY_IO_TARGET_EHANDLE = 0x6,
-                ENTITY_IO_TARGET_ENTITYNAME_OR_CLASSNAME = 0x7,
+                ENTITY_IO_TARGET_ENTITYNAME_OR_CLASSNAME = 0x7
             }
             // Parent: None
             // Field count: 0
-            pub mod EventClientPostSimulate_t {}
+            pub mod EventClientPostSimulate_t {
+            }
             // Parent: None
             // Field count: 3
             pub mod EventSimpleLoopFrameUpdate_t {
@@ -44,7 +45,7 @@ pub mod cs2_dumper {
                 pub const m_nTotalTicksThisFrame: usize = 0x38; // int32
                 pub const m_nTotalTicks: usize = 0x3C; // int32
             }
-            // Parent:
+            // Parent: None
             // Field count: 1
             pub mod CEntityIOOutput {
                 pub const m_Value: usize = 0x18; // CVariantBase<CVariantDefaultAllocator>
@@ -65,7 +66,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerPostSimulate_t {}
+            pub mod EventServerPostSimulate_t {
+            }
             // Parent: None
             // Field count: 4
             pub mod CEntityComponentHelper {
@@ -81,13 +83,16 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerEndAsyncPostTickWork_t {}
+            pub mod EventServerEndAsyncPostTickWork_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventClientAdvanceTick_t {}
+            pub mod EventClientAdvanceTick_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EntInput_t {}
+            pub mod EntInput_t {
+            }
             // Parent: None
             // Field count: 1
             pub mod CNetworkVarChainer {
@@ -95,7 +100,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventClientSimulate_t {}
+            pub mod EventClientSimulate_t {
+            }
             // Parent: None
             // Field count: 5
             pub mod EventClientPostOutput_t {
@@ -140,10 +146,12 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerSimulate_t {}
+            pub mod EventServerSimulate_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventServerPostAdvanceTick_t {}
+            pub mod EventServerPostAdvanceTick_t {
+            }
             // Parent: None
             // Field count: 1
             pub mod EventProfileStorageAvailable_t {
@@ -156,10 +164,12 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventClientPreSimulate_t {}
+            pub mod EventClientPreSimulate_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventClientPauseSimulate_t {}
+            pub mod EventClientPauseSimulate_t {
+            }
             // Parent: None
             // Field count: 1
             pub mod EventClientProcessNetworking_t {
@@ -175,16 +185,20 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventSplitScreenStateChanged_t {}
+            pub mod EventSplitScreenStateChanged_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventClientPostAdvanceTick_t {}
+            pub mod EventClientPostAdvanceTick_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod CVariantDefaultAllocator {}
+            pub mod CVariantDefaultAllocator {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventModInitialized_t {}
+            pub mod EventModInitialized_t {
+            }
             // Parent: None
             // Field count: 6
             pub mod EventClientPreOutput_t {
@@ -205,7 +219,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerAdvanceTick_t {}
+            pub mod EventServerAdvanceTick_t {
+            }
             // Parent: None
             // Field count: 8
             pub mod EventSetTime_t {
@@ -220,7 +235,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EntOutput_t {}
+            pub mod EntOutput_t {
+            }
             // Parent: None
             // Field count: 3
             pub mod EventSimulate_t {
@@ -230,13 +246,16 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventClientAdvanceNonRenderedFrame_t {}
+            pub mod EventClientAdvanceNonRenderedFrame_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod EventServerProcessNetworking_t {}
+            pub mod EventServerProcessNetworking_t {
+            }
             // Parent: None
             // Field count: 0
-            pub mod CEmptyEntityInstance {}
+            pub mod CEmptyEntityInstance {
+            }
             // Parent: None
             // Field count: 7
             pub mod EntComponentInfo_t {
@@ -263,7 +282,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerBeginAsyncPostTickWork_t {}
+            pub mod EventServerBeginAsyncPostTickWork_t {
+            }
             // Parent: None
             // Field count: 4
             pub mod EventClientProcessInput_t {
@@ -274,7 +294,8 @@ pub mod cs2_dumper {
             }
             // Parent: None
             // Field count: 0
-            pub mod EventServerPollNetworking_t {}
+            pub mod EventServerPollNetworking_t {
+            }
         }
     }
 }
