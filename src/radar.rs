@@ -12,11 +12,16 @@ impl Radar {
 }
 
 impl eframe::App for Radar {
+    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
+        egui::Color32::TRANSPARENT.to_normalized_gamma_f32()
+    }
+
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
         self.context.update();
         ctx.request_repaint();
+        ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::Window::new("Gaming chair").show(ctx, |ui| {
             if let Some(image) = self.context.map.image() {
                 let (zero_x, zero_y) = self.context.map.zeroing();
                 let scale = self.context.map.scale();
