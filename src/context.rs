@@ -15,6 +15,7 @@ mod vec3;
 pub const CURRENT_MAP: u64 = 0x180;
 
 pub struct Context {
+    os: OsInstanceArcBox<'static>,
     process: IntoProcessInstanceArcBox<'static>,
     client_module: ModuleInfo,
     engine_module: ModuleInfo,
@@ -36,6 +37,7 @@ impl Context {
         let engine_module = process.module_by_name("engine2.dll").unwrap();
 
         Context {
+            os,
             process,
             client_module,
             engine_module,
