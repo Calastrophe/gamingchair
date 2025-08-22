@@ -30,7 +30,7 @@ pub struct Context {
 
 impl Context {
     pub fn new(os: OsInstanceArcBox<'static>) -> Self {
-        let mut process = os.into_process_by_name("cs2.exe").unwrap();
+        let mut process = os.clone().into_process_by_name("cs2.exe").unwrap();
 
         let client_module = process.module_by_name("client.dll").unwrap();
 

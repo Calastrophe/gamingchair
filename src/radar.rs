@@ -21,6 +21,12 @@ impl eframe::App for Radar {
         ctx.request_repaint();
         ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
 
+        if let Ok(cs2_active) = crate::TOPMOST_WINDOW.lock() {
+            if !*cs2_active {
+                return;
+            }
+        }
+
         egui::Window::new("Gaming chair").show(ctx, |ui| {
             if let Some(image) = self.context.map.image() {
                 let (zero_x, zero_y) = self.context.map.zeroing();
