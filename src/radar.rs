@@ -1,5 +1,5 @@
 use crate::{Context, context::player::relation::Relation};
-use egui::{Color32, Stroke};
+use egui::{Color32, Shadow, Stroke};
 
 pub struct Radar {
     context: Context,
@@ -19,7 +19,11 @@ impl eframe::App for Radar {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
         self.context.update();
         ctx.request_repaint();
-        ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
+        //ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(true));
+
+        ctx.style_mut(|syl| {
+            syl.visuals.window_shadow = Shadow::NONE;
+        });
 
         if let Ok(cs2_active) = crate::TOPMOST_WINDOW.lock() {
             if !*cs2_active {

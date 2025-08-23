@@ -14,7 +14,11 @@ env_logger = "0.11.8"
 image = { version = "0.25.6", features = ["png"] }
 log = "0.4.27"
 memflow = "0.2.3"
-
+memflow-win32 = "0.2.0"
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging"
+] }
 
 
 [build-dependencies]

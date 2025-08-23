@@ -5,7 +5,7 @@ mod context;
 mod offsets;
 mod radar;
 
-use std::{ffi::OsString, thread, time::Duration};
+use std::{thread, time::Duration};
 
 use clap::Parser;
 use context::Context;
@@ -18,6 +18,7 @@ use windows_sys::Win32::{
 use std::sync::{Arc, LazyLock, Mutex};
 //todo; find a clean location for this
 static TOPMOST_WINDOW: LazyLock<Arc<Mutex<bool>>> = LazyLock::new(|| Arc::new(Mutex::new(false)));
+static PASSTHROUGH: LazyLock<Arc<Mutex<bool>>> = LazyLock::new(|| Arc::new(Mutex::new(false)));
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -36,14 +37,15 @@ fn main() -> eframe::Result {
 
     color_eyre::install().unwrap();
 
-    start_window_monitor();
 
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
+            .with_clamp_size_to_monitor_size(true)
+            .with_inner_size([1920.0, 1080.0])
+            .with_position([0.0, 0.0])
+            .with_transparent(true)
             .with_decorations(false)
-            .with_fullscreen(true)
-            .with_always_on_top()
-            .with_transparent(true),
+            .with_always_on_top(),
         renderer: eframe::Renderer::Glow,
         multisampling: 1,
         ..Default::default()
@@ -64,6 +66,9 @@ fn main() -> eframe::Result {
     }
     .unwrap();
 
+
+    start_window_monitor();
+
     let context = Context::new(os_instance);
 
     eframe::run_native(
@@ -76,6 +81,8 @@ fn main() -> eframe::Result {
     )
 }
 
+
+
 fn start_window_monitor() {
     thread::spawn(|| {
         loop {
@@ -86,13 +93,8 @@ fn start_window_monitor() {
                     if let Ok(mut topmost_is_cs2) = TOPMOST_WINDOW.lock() {
                         if *topmost_is_cs2 != is_cs2 {
                             *topmost_is_cs2 = is_cs2;
-                            if is_cs2 {
-                                println!("Counter Strike 2 is now active");
-                            } else {
-                                println!("Counter Strike 2 is no longer active (now: {})", title);
-                            }
                         }
-                    } 
+                    }
                 }
             }
             // Sleep for 30ms
@@ -100,9 +102,6 @@ fn start_window_monitor() {
         }
     });
 }
-
-
-
 
 unsafe fn get_window_title(hwnd: HWND) -> Option<String> {
     unsafe {
@@ -123,5 +122,3 @@ unsafe fn get_window_title(hwnd: HWND) -> Option<String> {
         String::from_utf16(&buffer).ok()
     }
 }
-
-
