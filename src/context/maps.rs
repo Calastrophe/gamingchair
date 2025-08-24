@@ -58,7 +58,6 @@ impl Map {
 
     pub fn zeroing(&self) -> (f32, f32) {
         match self {
-            Self::Empty => (0.0, 0.0),
             Self::Ancient => (-2953.0, 2164.0),
             Self::Anubis => (-2796.0, 3328.0),
             Self::Dust2 => (-2476.0, 3239.0),
@@ -70,12 +69,12 @@ impl Map {
             Self::Overpass => (-4831.0, 1781.0),
             Self::Train => (-2308.0, 2078.0),
             Self::Vertigo => (-3168.0, 1762.0),
+            Self::Empty => unreachable!(),
         }
     }
 
     pub fn scale(&self) -> f32 {
         match self {
-            Self::Empty => 0.0,
             Self::Ancient => 5.0,
             Self::Anubis => 5.22,
             Self::Dust2 => 4.400000095367432,
@@ -87,6 +86,7 @@ impl Map {
             Self::Overpass => 5.2,
             Self::Train => 4.082077,
             Self::Vertigo => 4.0,
+            Self::Empty => unreachable!(),
         }
     }
 }
