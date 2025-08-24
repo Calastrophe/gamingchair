@@ -15,6 +15,7 @@ mod vec3;
 pub const CURRENT_MAP: u64 = 0x180;
 
 pub struct Context {
+    os: OsInstanceArcBox<'static>,
     process: IntoProcessInstanceArcBox<'static>,
     client_module: ModuleInfo,
     engine_module: ModuleInfo,
@@ -29,13 +30,14 @@ pub struct Context {
 
 impl Context {
     pub fn new(os: OsInstanceArcBox<'static>) -> Self {
-        let mut process = os.into_process_by_name("cs2.exe").unwrap();
+        let mut process = os.clone().into_process_by_name("cs2.exe").unwrap();
 
         let client_module = process.module_by_name("client.dll").unwrap();
 
         let engine_module = process.module_by_name("engine2.dll").unwrap();
 
         Context {
+            os,
             process,
             client_module,
             engine_module,
