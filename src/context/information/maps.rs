@@ -40,17 +40,17 @@ impl Map {
     pub fn image(&self) -> Option<Image<'_>> {
         let img_src = match self {
             Self::Empty => return None,
-            Self::Ancient => egui::include_image!("../../assets/maps/ancient.png"),
-            Self::Anubis => egui::include_image!("../../assets/maps/anubis.png"),
-            Self::Dust2 => egui::include_image!("../../assets/maps/dust2.png"),
-            Self::Inferno => egui::include_image!("../../assets/maps/inferno.png"),
-            Self::Italy => egui::include_image!("../../assets/maps/italy.png"),
-            Self::Mirage => egui::include_image!("../../assets/maps/mirage.png"),
-            Self::Nuke => egui::include_image!("../../assets/maps/nuke.png"),
-            Self::Office => egui::include_image!("../../assets/maps/office.png"),
-            Self::Overpass => egui::include_image!("../../assets/maps/overpass.png"),
-            Self::Train => egui::include_image!("../../assets/maps/train.png"),
-            Self::Vertigo => egui::include_image!("../../assets/maps/vertigo.png"),
+            Self::Ancient => egui::include_image!("../../../assets/maps/ancient.png"),
+            Self::Anubis => egui::include_image!("../../../assets/maps/anubis.png"),
+            Self::Dust2 => egui::include_image!("../../../assets/maps/dust2.png"),
+            Self::Inferno => egui::include_image!("../../../assets/maps/inferno.png"),
+            Self::Italy => egui::include_image!("../../../assets/maps/italy.png"),
+            Self::Mirage => egui::include_image!("../../../assets/maps/mirage.png"),
+            Self::Nuke => egui::include_image!("../../../assets/maps/nuke.png"),
+            Self::Office => egui::include_image!("../../../assets/maps/office.png"),
+            Self::Overpass => egui::include_image!("../../../assets/maps/overpass.png"),
+            Self::Train => egui::include_image!("../../../assets/maps/train.png"),
+            Self::Vertigo => egui::include_image!("../../../assets/maps/vertigo.png"),
         };
 
         Some(Image::new(img_src).bg_fill(Rgba::TRANSPARENT))

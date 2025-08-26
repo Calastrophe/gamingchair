@@ -89,11 +89,11 @@ impl From<i16> for Equipment {
             47 => Equipment::Decoy,
             48 => Equipment::Incendiary,
             49 => Equipment::C4,
-            42 | 59 => Equipment::Knife,
             60 => Equipment::M4A1S,
             61 => Equipment::USPS,
             63 => Equipment::CZ75,
             64 => Equipment::Revolver,
+            42 | 59 | 500 | 503 | 505..=509 | 512 | 514..=523 | 525 => Equipment::Knife,
             _ => Equipment::Unknown,
         }
     }

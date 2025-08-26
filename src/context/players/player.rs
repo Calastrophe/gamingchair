@@ -1,14 +1,7 @@
-use crate::offsets;
-
-use super::{equipment::Equipment, vec3::Vec3};
+use super::offsets;
+use super::{Equipment, Relation, TeamID, Vec3, util};
 use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, Ui, Vec2};
 use memflow::prelude::v1::*;
-use relation::Relation;
-use teamid::TeamID;
-
-pub mod relation;
-pub mod teamid;
-mod util;
 
 const SIGHT_LINE_LENGTH: f32 = 14.0;
 const SCOPED_LINE_LENGTH: f32 = 1000.0;
@@ -148,6 +141,8 @@ impl Player {
         }
     }
 
+    // TODO: Read the entire loadout of the player and collect in a vector of equipment.
+    // NEED: dwEntityList
     pub fn read(
         process: &mut IntoProcessInstanceArcBox<'static>,
         controller: Address,
