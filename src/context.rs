@@ -178,7 +178,8 @@ impl Context {
 
         self.players = controllers
             .iter()
-            .zip(actual_pawns.iter())
+            .skip(1)
+            .zip(actual_pawns.iter().skip(1))
             .filter_map(|(controller, pawn)| {
                 let controller_addr = Address::from(*controller);
                 let pawn_addr = Address::from(*pawn);

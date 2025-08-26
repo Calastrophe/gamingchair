@@ -1,7 +1,9 @@
 use egui::{Image, Rgba};
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum Equipment {
+    #[default]
     Unknown,
+    Knife,
     Deagle,
     Dualies,
     Fiveseven,
@@ -46,8 +48,8 @@ pub enum Equipment {
     Revolver,
 }
 
-impl From<i32> for Equipment {
-    fn from(value: i32) -> Self {
+impl From<i16> for Equipment {
+    fn from(value: i16) -> Self {
         match value {
             1 => Equipment::Deagle,
             2 => Equipment::Dualies,
@@ -87,6 +89,7 @@ impl From<i32> for Equipment {
             47 => Equipment::Decoy,
             48 => Equipment::Incendiary,
             49 => Equipment::C4,
+            42 | 59 => Equipment::Knife,
             60 => Equipment::M4A1S,
             61 => Equipment::USPS,
             63 => Equipment::CZ75,
@@ -99,55 +102,56 @@ impl From<i32> for Equipment {
 impl Equipment {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Equipment::Unknown => "unknown",
-            Equipment::AK47 => "ak47",
-            Equipment::AUG => "aug",
-            Equipment::AWP => "awp",
-            Equipment::Bizon => "bizon",
-            Equipment::C4 => "c4",
-            Equipment::CZ75 => "cz75a",
-            Equipment::Deagle => "deagle",
-            Equipment::Decoy => "decoy",
-            Equipment::Dualies => "dualies",
-            Equipment::FAMAS => "famas",
-            Equipment::Fiveseven => "fiveseven",
-            Equipment::Flashbang => "flashbang",
-            Equipment::G3GS1 => "g3sg1",
-            Equipment::Galil => "galilar",
-            Equipment::Glock => "glock",
-            Equipment::HE => "hegrenade",
-            Equipment::Incendiary => "incgrenade",
-            Equipment::M249 => "m249",
-            Equipment::M4A1S => "m4a1_silencer",
-            Equipment::M4A4 => "m4a4",
-            Equipment::MAC10 => "mac10",
-            Equipment::MAG7 => "mag7",
-            Equipment::Molotov => "molotov",
-            Equipment::MP5SD => "mp5sd",
-            Equipment::MP7 => "mp7",
-            Equipment::MP9 => "mp9",
-            Equipment::Negev => "negev",
-            Equipment::Nova => "nova",
-            Equipment::P2000 => "p2000",
-            Equipment::P250 => "p250",
-            Equipment::P90 => "p90",
-            Equipment::Revolver => "revolver",
-            Equipment::SawedOff => "sawedoff",
-            Equipment::SCAR20 => "scar20",
-            Equipment::SG556 => "sg556",
-            Equipment::Smoke => "smokegrenade",
-            Equipment::SSG08 => "ssg08",
-            Equipment::Zeus => "taser",
-            Equipment::Tec9 => "tec9",
-            Equipment::UMP45 => "ump45",
-            Equipment::USPS => "usp_silencer",
-            Equipment::XM1014 => "xm1014",
+            Equipment::Unknown => "UNKNOWN",
+            Equipment::Knife => "KNIFE",
+            Equipment::AK47 => "AK-47",
+            Equipment::AUG => "AUG",
+            Equipment::AWP => "AWP",
+            Equipment::Bizon => "BIZON",
+            Equipment::C4 => "C4",
+            Equipment::CZ75 => "CZ75",
+            Equipment::Deagle => "DEAGLE",
+            Equipment::Decoy => "DECOY",
+            Equipment::Dualies => "DUALIES",
+            Equipment::FAMAS => "FAMAS",
+            Equipment::Fiveseven => "FIVE-SEVEN",
+            Equipment::Flashbang => "FLASHBANG",
+            Equipment::G3GS1 => "G3SG1",
+            Equipment::Galil => "GALIL",
+            Equipment::Glock => "GLOCK",
+            Equipment::HE => "HE",
+            Equipment::Incendiary => "INCENDIARY",
+            Equipment::M249 => "M249",
+            Equipment::M4A1S => "M4A1-S",
+            Equipment::M4A4 => "M4A4",
+            Equipment::MAC10 => "MAC-10",
+            Equipment::MAG7 => "MAG-7",
+            Equipment::Molotov => "MOLOTOV",
+            Equipment::MP5SD => "MP5-SD",
+            Equipment::MP7 => "MP7",
+            Equipment::MP9 => "MP9",
+            Equipment::Negev => "NEGEV",
+            Equipment::Nova => "NOVA",
+            Equipment::P2000 => "P2000",
+            Equipment::P250 => "P250",
+            Equipment::P90 => "P90",
+            Equipment::Revolver => "REVOLVER",
+            Equipment::SawedOff => "SAWED-OFF",
+            Equipment::SCAR20 => "SCAR-20",
+            Equipment::SG556 => "SG553",
+            Equipment::Smoke => "SMOKE",
+            Equipment::SSG08 => "SSG 08",
+            Equipment::Zeus => "ZEUS",
+            Equipment::Tec9 => "TEC-9",
+            Equipment::UMP45 => "UMP-45",
+            Equipment::USPS => "USP-S",
+            Equipment::XM1014 => "XM1014",
         }
     }
 
-    pub fn image(&self) -> Image<'_> {
+    pub fn image(&self) -> Option<Image<'_>> {
         let img_src = match self {
-            Equipment::Unknown => egui::include_image!("../../assets/equipment/elite.svg"),
+            Equipment::Unknown | Equipment::Knife => return None,
             Equipment::AK47 => egui::include_image!("../../assets/equipment/ak47.svg"),
             Equipment::AUG => egui::include_image!("../../assets/equipment/aug.svg"),
             Equipment::AWP => egui::include_image!("../../assets/equipment/awp.svg"),
@@ -196,6 +200,6 @@ impl Equipment {
             Equipment::Dualies => egui::include_image!("../../assets/equipment/elite.svg"),
         };
 
-        Image::new(img_src).bg_fill(Rgba::TRANSPARENT)
+        Some(Image::new(img_src).bg_fill(Rgba::TRANSPARENT))
     }
 }
