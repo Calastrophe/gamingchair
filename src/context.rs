@@ -136,50 +136,37 @@ impl Context {
 
         {
             let mut batcher = self.process.batcher();
-            pawns
-                .iter_mut()
-                .enumerate()
-                .skip(1)
-                .for_each(|(idx, data)| {
-                    let entity_controller: Address = controllers[idx].into();
-                    batcher.read_into(
-                        entity_controller + offsets::client::CCSPlayerController::m_hPlayerPawn,
-                        data,
-                    );
-                })
+            pawns.iter_mut().enumerate().for_each(|(idx, data)| {
+                let entity_controller: Address = controllers[idx].into();
+                batcher.read_into(
+                    entity_controller + offsets::client::CCSPlayerController::m_hPlayerPawn,
+                    data,
+                );
+            })
         }
 
         let mut entity_list = [0u64; 64];
 
         {
             let mut batcher = self.process.batcher();
-            entity_list
-                .iter_mut()
-                .enumerate()
-                .skip(1)
-                .for_each(|(idx, data)| {
-                    batcher.read_into(ent_list + (8 * ((pawns[idx] & 0x7FFF) >> 9) + 16), data);
-                })
+            entity_list.iter_mut().enumerate().for_each(|(idx, data)| {
+                batcher.read_into(ent_list + (8 * ((pawns[idx] & 0x7FFF) >> 9) + 16), data);
+            })
         }
 
         let mut actual_pawns = [0u64; 64];
 
         {
             let mut batcher = self.process.batcher();
-            actual_pawns
-                .iter_mut()
-                .enumerate()
-                .skip(1)
-                .for_each(|(idx, data)| {
-                    let list_entry: Address = entity_list[idx].into();
-                    batcher.read_into(list_entry + (120) * (pawns[idx] & 0x1FF), data);
-                })
+            actual_pawns.iter_mut().enumerate().for_each(|(idx, data)| {
+                let list_entry: Address = entity_list[idx].into();
+                batcher.read_into(list_entry + (120) * (pawns[idx] & 0x1FF), data);
+            })
         }
 
         self.players = controllers
             .iter()
-            .skip(1)
-            .zip(actual_pawns.iter().skip(1))
+            .zip(actual_pawns.iter())
             .filter_map(|(controller, pawn)| {
                 let controller_addr = Address::from(*controller);
                 let pawn_addr = Address::from(*pawn);

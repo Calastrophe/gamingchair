@@ -4,7 +4,6 @@
 mod context;
 mod offsets;
 mod radar;
-mod util;
 
 use clap::Parser;
 use context::Context;
