@@ -109,13 +109,9 @@ impl Context {
 
         {
             let mut batcher = self.process.batcher();
-            list_entries
-                .iter_mut()
-                .enumerate()
-                .skip(1)
-                .for_each(|(idx, data)| {
-                    batcher.read_into(ent_list + ((8 * (idx & 0x7FFF) >> 9) + 16), data);
-                });
+            list_entries.iter_mut().enumerate().for_each(|(idx, data)| {
+                batcher.read_into(ent_list + ((8 * (idx & 0x7FFF) >> 9) + 16), data);
+            });
         }
 
         let mut controllers = [0u64; 64];
