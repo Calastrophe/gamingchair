@@ -1,7 +1,6 @@
 use crate::offsets;
 
 use super::{equipment::Equipment, vec3::Vec3};
-use color_eyre::owo_colors::OwoColorize;
 use egui::{Align2, Color32, FontId, Painter, Pos2, Rect, Stroke, Ui, Vec2};
 use memflow::prelude::v1::*;
 use relation::Relation;
@@ -16,6 +15,10 @@ const SCOPED_LINE_LENGTH: f32 = 1000.0;
 const CIRCLE_RADIUS: f32 = 8.0;
 const MAX_HEALTH: f32 = 100.0;
 const FONT_SIZE: f32 = 9.0;
+const NAME_OFFSET: Vec2 = Vec2::new(0.0, 20.0);
+const CAUTION_OFFSET: Vec2 = Vec2::new(0.0, -25.0);
+const UTILITY_OFFSET: Vec2 = Vec2::new(0.0, 22.0);
+const UTILITY_SIZE: Vec2 = Vec2::new(12.0, 20.0);
 
 #[derive(Default, Debug)]
 pub struct Player {
@@ -105,7 +108,7 @@ impl Player {
 
         // Display player's name a little below their circle.
         painter.text(
-            position + Vec2::new(0.0, 20.0),
+            position + NAME_OFFSET,
             Align2::CENTER_CENTER,
             &self.name,
             FontId::monospace(FONT_SIZE),
@@ -120,7 +123,7 @@ impl Player {
             )
         {
             painter.text(
-                position + Vec2::new(0.0, -25.0),
+                position + CAUTION_OFFSET,
                 Align2::CENTER_CENTER,
                 "!",
                 FontId::monospace(FONT_SIZE * 2.0),
@@ -139,7 +142,7 @@ impl Player {
                 | Equipment::Incendiary
         ) {
             let image = self.current_weapon.image().unwrap();
-            let rect = Rect::from_center_size(position - Vec2::DOWN * 22.0, Vec2::new(12.0, 20.0));
+            let rect = Rect::from_center_size(position + UTILITY_OFFSET, UTILITY_SIZE);
 
             image.paint_at(ui, rect);
         }
