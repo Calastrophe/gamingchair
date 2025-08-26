@@ -118,14 +118,10 @@ impl Context {
 
         {
             let mut batcher = self.process.batcher();
-            controllers
-                .iter_mut()
-                .enumerate()
-                .skip(1)
-                .for_each(|(idx, data)| {
-                    let list_entry: Address = list_entries[idx].into();
-                    batcher.read_into(list_entry + 120 * (idx & 0x1FF), data);
-                });
+            controllers.iter_mut().enumerate().for_each(|(idx, data)| {
+                let list_entry: Address = list_entries[idx].into();
+                batcher.read_into(list_entry + 120 * (idx & 0x1FF), data);
+            });
         }
 
         let mut pawns = [0u64; 64];
