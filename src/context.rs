@@ -170,12 +170,10 @@ impl Context {
                 }
             })
             .filter_map(|(controller, pawn)| {
-                let player = Player::read(&mut self.process, controller, pawn);
-
-                if player == self.local_player {
+                if controller == self.local_player.controller {
                     None
                 } else {
-                    Some(player)
+                    Some(Player::read(&mut self.process, controller, pawn))
                 }
             })
             .map(|mut player| {

@@ -19,8 +19,8 @@ const FONT_SIZE: f32 = 9.0;
 
 #[derive(Default, Debug)]
 pub struct Player {
-    controller: Address,
-    pawn: Address,
+    pub controller: Address,
+    pub pawn: Address,
     pub health: u32,
     pub position: Vec3,
     pub yaw: f32,
@@ -229,15 +229,5 @@ impl Player {
         player.is_scoped = is_scoped != 0;
         player.team_id = TeamID::from(team);
         player
-    }
-}
-
-impl PartialEq for Player {
-    fn eq(&self, other: &Self) -> bool {
-        self.controller == other.controller
-    }
-
-    fn ne(&self, other: &Self) -> bool {
-        self.controller != other.controller
     }
 }

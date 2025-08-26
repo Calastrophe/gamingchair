@@ -1,6 +1,8 @@
 use crate::Context;
 use egui::Rect;
 
+const ACTUAL_IMAGE_SIZE: f32 = 1024.0;
+
 pub struct Radar {
     context: Context,
     scene_rect: Rect,
@@ -27,7 +29,7 @@ impl eframe::App for Radar {
                 scene.show(ui, &mut self.scene_rect, |ui| {
                     let zeroing = self.context.map.zeroing();
                     let scale = self.context.map.scale();
-                    let image_scaling = ui.add(image).rect.bottom() / 1024.0;
+                    let image_scaling = ui.add(image).rect.bottom() / ACTUAL_IMAGE_SIZE;
                     let painter = ui.painter();
 
                     self.context
