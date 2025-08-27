@@ -17,7 +17,8 @@ impl Information {
 
         let map_address = Address::from(ptrs.global_vars + CURRENT_MAP_OFFSET);
 
-        process.read_into(map_address, &mut map_ptr).unwrap();
+        // TODO: Potential undefined behavior happening?
+        let _ = process.read_into(map_address, &mut map_ptr);
 
         let map_name = process
             .read_utf8_lossy(map_ptr.into(), 32)

@@ -10,7 +10,7 @@ const MAX_HEALTH: f32 = 100.0;
 const FONT_SIZE: f32 = 9.0;
 const NAME_OFFSET: Vec2 = Vec2::new(0.0, 20.0);
 const CAUTION_OFFSET: Vec2 = Vec2::new(0.0, -25.0);
-const UTILITY_OFFSET: Vec2 = Vec2::new(0.0, 22.0);
+const UTILITY_OFFSET: Vec2 = Vec2::new(0.0, -22.0);
 const UTILITY_SIZE: Vec2 = Vec2::new(12.0, 20.0);
 
 #[derive(Default, Debug)]
@@ -25,6 +25,7 @@ pub struct Player {
     pub name: String,
     pub money: i32,
     pub current_weapon: Equipment,
+    pub loadout: Vec<Equipment>,
     pub is_scoped: bool,
 }
 
@@ -147,12 +148,14 @@ impl Player {
         process: &mut IntoProcessInstanceArcBox<'static>,
         controller: Address,
         pawn: Address,
+        entity_list: Address,
     ) -> Player {
         let mut player = Player::new(controller, pawn);
         let mut team = 0i32;
         let mut is_scoped = 0u8;
         let mut clipping_weapon_ptr = 0u64;
         let mut money_services_ptr = 0u64;
+        let mut weapon_services_ptr = 0u64;
         let mut player_name_ptr = 0u64;
 
         {
@@ -179,6 +182,10 @@ impl Player {
                 &mut clipping_weapon_ptr,
             );
             batcher.read_into(
+                pawn + offsets::client::C_BasePlayerPawn::m_pWeaponServices,
+                &mut weapon_services_ptr,
+            );
+            batcher.read_into(
                 controller + offsets::client::CCSPlayerController::m_pInGameMoneyServices,
                 &mut money_services_ptr,
             );
@@ -192,37 +199,126 @@ impl Player {
             );
         }
 
-        let (money_services_address, player_name_address, clipping_weapon_address) = (
+        let (
+            money_services_address,
+            player_name_address,
+            clipping_weapon_address,
+            weapon_services_address,
+        ) = (
             Address::from(money_services_ptr),
             Address::from(player_name_ptr),
             Address::from(clipping_weapon_ptr),
+            Address::from(weapon_services_ptr),
         );
 
-        if !money_services_address.is_null() {
-            player.money = process
-                .read(
-                    money_services_address
-                        + offsets::client::CCSPlayerController_InGameMoneyServices::m_iAccount,
-                )
-                .unwrap_or_default();
+        player.money = process
+            .read(
+                money_services_address
+                    + offsets::client::CCSPlayerController_InGameMoneyServices::m_iAccount,
+            )
+            .unwrap_or_default();
+
+        player.name = process
+            .read_utf8_lossy(player_name_address, 32)
+            .unwrap_or_default();
+
+        let item_idx_addr = clipping_weapon_address
+            + offsets::client::C_EconEntity::m_AttributeManager
+            + offsets::client::C_AttributeContainer::m_Item
+            + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+
+        let item_idx: i16 = process.read(item_idx_addr).unwrap_or_default();
+
+        player.current_weapon = Equipment::from(item_idx);
+
+        let mut weapon_count = 0i32;
+        let mut weapons_base_ptr = 0u64;
+
+        {
+            let mut batcher = process.batcher();
+            batcher.read_into(
+                weapon_services_address + offsets::client::CPlayer_WeaponServices::m_hMyWeapons,
+                &mut weapon_count,
+            );
+            batcher.read_into(
+                weapon_services_address
+                    + offsets::client::CPlayer_WeaponServices::m_hMyWeapons
+                    + 0x8,
+                &mut weapons_base_ptr,
+            );
         }
 
-        if !player_name_address.is_null() {
-            player.name = process
-                .read_utf8_lossy(player_name_address, 32)
-                .unwrap_or_default();
+        let weapon_count = weapon_count.clamp(0, 32) as usize;
+        let weapons_base_address = Address::from(weapons_base_ptr);
+        let mut weapon_handles = vec![0u64; weapon_count];
+
+        {
+            let mut batcher = process.batcher();
+            weapon_handles
+                .iter_mut()
+                .enumerate()
+                .for_each(|(idx, handle)| {
+                    batcher.read_into(weapons_base_address + (idx * 0x4), handle);
+                });
         }
 
-        if !clipping_weapon_address.is_null() {
-            let item_idx_addr = clipping_weapon_address
-                + offsets::client::C_EconEntity::m_AttributeManager
-                + offsets::client::C_AttributeContainer::m_Item
-                + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+        let mut list_entries = vec![0u64; weapon_count];
 
-            let item_idx: i16 = process.read(item_idx_addr).unwrap_or_default();
-
-            player.current_weapon = Equipment::from(item_idx);
+        {
+            let mut batcher = process.batcher();
+            list_entries
+                .iter_mut()
+                .zip(&weapon_handles)
+                .for_each(|(list_entry, weapon_handle)| {
+                    batcher.read_into(
+                        entity_list + 0x8 * ((weapon_handle & 0x7FFF) >> 9) + 16,
+                        list_entry,
+                    );
+                });
         }
+
+        {
+            let mut batcher = process.batcher();
+            list_entries
+                .iter_mut()
+                .zip(&weapon_handles)
+                .for_each(|(entry, weapon_handle)| {
+                    let address = Address::from(*entry + 120 * (weapon_handle & 0x1FF));
+                    batcher.read_into(address, entry);
+                });
+        }
+
+        let weapons = list_entries;
+        let mut weapon_idxs = vec![0i16; weapon_count];
+        {
+            let mut batcher = process.batcher();
+            weapons
+                .iter()
+                .zip(&mut weapon_idxs)
+                .for_each(|(weapon, weapon_idx)| {
+                    let weapon_address = Address::from(*weapon);
+
+                    let weapon_idx_address = weapon_address
+                        + offsets::client::C_EconEntity::m_AttributeManager
+                        + offsets::client::C_AttributeContainer::m_Item
+                        + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+
+                    batcher.read_into(weapon_idx_address, weapon_idx);
+                })
+        }
+
+        player.loadout = weapon_idxs
+            .iter()
+            .filter_map(|weapon_idx| {
+                let weapon = Equipment::from(*weapon_idx);
+
+                if matches!(weapon, Equipment::Unknown | Equipment::Knife) {
+                    None
+                } else {
+                    Some(weapon)
+                }
+            })
+            .collect();
 
         player.is_scoped = is_scoped != 0;
         player.team_id = TeamID::from(team);

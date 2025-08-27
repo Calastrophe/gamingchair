@@ -24,6 +24,11 @@ pub struct Players {
 }
 
 impl Players {
+    pub fn sides(&self) -> (Vec<&Player>, Vec<&Player>) {
+        self.iter()
+            .partition(|player| player.team_id == self.local_player.team_id)
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = &Player> {
         std::iter::once(&self.local_player).chain(self.other_players.iter())
     }
@@ -43,12 +48,17 @@ impl Players {
             batcher.read_into(ptrs.module_base + dwLocalPlayerPawn, &mut local_pawn);
         }
 
-        self.local_player = Player::read(process, local_controller.into(), local_pawn.into());
+        let ent_list = Address::from(ptrs.entity_list);
+        self.local_player = Player::read(
+            process,
+            local_controller.into(),
+            local_pawn.into(),
+            ent_list,
+        );
         self.local_player.relation = Relation::Local;
 
         // Fetch other players
         let mut list_entries = [0u64; 64];
-        let ent_list = Address::from(ptrs.entity_list);
 
         {
             let mut batcher = process.batcher();
@@ -67,11 +77,11 @@ impl Players {
             });
         }
 
-        let mut pawns = [0u64; 64];
+        let mut pawn_handles = [0u64; 64];
 
         {
             let mut batcher = process.batcher();
-            pawns.iter_mut().enumerate().for_each(|(idx, data)| {
+            pawn_handles.iter_mut().enumerate().for_each(|(idx, data)| {
                 let entity_controller: Address = controllers[idx].into();
                 batcher.read_into(entity_controller + m_hPlayerPawn, data);
             })
@@ -82,23 +92,26 @@ impl Players {
         {
             let mut batcher = process.batcher();
             entity_list.iter_mut().enumerate().for_each(|(idx, data)| {
-                batcher.read_into(ent_list + (8 * ((pawns[idx] & 0x7FFF) >> 9) + 16), data);
+                batcher.read_into(
+                    ent_list + (8 * ((pawn_handles[idx] & 0x7FFF) >> 9) + 16),
+                    data,
+                );
             })
         }
 
-        let mut actual_pawns = [0u64; 64];
+        let mut pawns = [0u64; 64];
 
         {
             let mut batcher = process.batcher();
-            actual_pawns.iter_mut().enumerate().for_each(|(idx, data)| {
+            pawns.iter_mut().enumerate().for_each(|(idx, data)| {
                 let list_entry: Address = entity_list[idx].into();
-                batcher.read_into(list_entry + (120) * (pawns[idx] & 0x1FF), data);
+                batcher.read_into(list_entry + (120) * (pawn_handles[idx] & 0x1FF), data);
             })
         }
 
         self.other_players = controllers
             .iter()
-            .zip(actual_pawns.iter())
+            .zip(pawns.iter())
             .filter_map(|(controller, pawn)| {
                 let controller_addr = Address::from(*controller);
                 let pawn_addr = Address::from(*pawn);
@@ -113,7 +126,7 @@ impl Players {
                 if controller == self.local_player.controller {
                     None
                 } else {
-                    Some(Player::read(process, controller, pawn))
+                    Some(Player::read(process, controller, pawn, ent_list))
                 }
             })
             .map(|mut player| {
