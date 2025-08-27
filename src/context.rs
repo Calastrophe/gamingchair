@@ -21,9 +21,10 @@ impl Context {
     pub fn new(os: OsInstanceArcBox<'static>) -> Self {
         let mut process = os.into_process_by_name("cs2.exe").unwrap();
         let client_module = process.module_by_name("client.dll").unwrap();
+        let engine_module = process.module_by_name("engine2.dll").unwrap();
 
         let game_build: u32 = process
-            .read(client_module.base + offsets::engine2_dll::dwBuildNumber)
+            .read(engine_module.base + offsets::engine2_dll::dwBuildNumber)
             .unwrap();
         let supported_game_build = env!("CS2_BUILD_NUMBER").parse::<u32>().unwrap();
 
