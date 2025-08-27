@@ -1,12 +1,8 @@
+use crate::offsets;
 use information::Information;
 use memflow::prelude::v1::*;
 use players::Players;
 use pointers::Pointers;
-
-use crate::offsets::{
-    self,
-    client_dll::{dwLocalPlayerController, dwLocalPlayerPawn},
-};
 
 mod equipment;
 mod information;
@@ -25,6 +21,17 @@ impl Context {
     pub fn new(os: OsInstanceArcBox<'static>) -> Self {
         let mut process = os.into_process_by_name("cs2.exe").unwrap();
         let client_module = process.module_by_name("client.dll").unwrap();
+
+        let game_build: u32 = process
+            .read(client_module.base + offsets::engine2_dll::dwBuildNumber)
+            .unwrap();
+        let supported_game_build = env!("CS2_BUILD_NUMBER").parse::<u32>().unwrap();
+
+        if game_build != supported_game_build {
+            panic!(
+                "Unsupported game build: {game_build}, current supported game build: {supported_game_build}."
+            )
+        }
 
         Context {
             process,
