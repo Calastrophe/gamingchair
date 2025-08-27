@@ -22,7 +22,7 @@ fn download(url: &str, to: String) -> Result<(), Box<dyn Error>> {
 
 fn build_number() -> Result<(), Box<dyn Error>> {
     let content = reqwest::blocking::get(
-        "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/info.json",
+        "https://raw.githubusercontent.com/vablings/cs2-dumper/main/output/info.json",
     )
     .unwrap_or_else(|_| panic!("Downloading info.json"))
     .text()
@@ -38,19 +38,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let path = "./src/offsets/";
 
     download(
-        "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/client_dll.rs",
+        "https://raw.githubusercontent.com/vablings/cs2-dumper/refs/heads/main/output/client_dll.rs",
         format!("{path}/client_module.rs"),
     )
     .expect("Failed to download build file \"client.dll.rs\"");
 
     download(
-        "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/offsets.rs",
+        "https://raw.githubusercontent.com/vablings/cs2-dumper/refs/heads/main/output/offsets.rs",
         format!("{path}/offsets.rs"),
     )
     .expect("Failed to download build file \"offsets.rs\"");
 
     download(
-        "https://raw.githubusercontent.com/a2x/cs2-dumper/refs/heads/main/output/engine2_dll.rs",
+        "https://raw.githubusercontent.com/vablings/cs2-dumper/refs/heads/main/output/engine2_dll.rs",
         format!("{path}/engine2_module.rs"),
     )
     .expect("Failed to download build file \"engine2.dll.rs\"");
