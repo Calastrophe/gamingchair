@@ -1,6 +1,6 @@
 use egui::{Image, Rgba};
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(PartialEq, Debug, Default, Clone, Copy)]
 pub enum Map {
     #[default]
     Empty,

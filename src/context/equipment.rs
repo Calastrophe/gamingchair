@@ -1,4 +1,5 @@
 use egui::{Image, Rgba};
+
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum Equipment {
     #[default]

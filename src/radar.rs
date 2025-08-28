@@ -27,9 +27,32 @@ impl eframe::App for Radar {
         // If enabled, draw the in-game overlay.
 
         // Draw the side panel responsible for showing general economy and loadouts.
-        egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
-            let (friendlies, enemies) = self.context.players.sides();
-        });
+        // egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
+        //     if !self.context.information.in_game() {
+        //         return;
+        //     }
+
+        //     let (friendlies, enemies) = self.context.players.sides();
+
+        //     ui.vertical(|ui| {
+        //         ui.label("friendlies");
+        //         for friendly in friendlies {
+        //             ui.label(&friendly.name);
+        //             ui.horizontal(|ui| {
+        //                 ui.label(friendly.health.to_string());
+
+        //                 for weapon in &friendly.loadout {
+        //                     if let Some(image) = weapon.image() {
+        //                         ui.image(image.source(ctx));
+        //                     }
+        //                 }
+        //             });
+        //         }
+
+        //         ui.separator();
+        //         ui.label("enemies");
+        //     });
+        // });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             let current_map = self.context.information.current_map;

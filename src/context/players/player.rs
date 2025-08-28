@@ -142,8 +142,6 @@ impl Player {
         }
     }
 
-    // TODO: Read the entire loadout of the player and collect in a vector of equipment.
-    // NEED: dwEntityList
     pub fn read(
         process: &mut IntoProcessInstanceArcBox<'static>,
         controller: Address,

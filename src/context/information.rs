@@ -12,6 +12,10 @@ pub struct Information {
 }
 
 impl Information {
+    pub fn in_game(&self) -> bool {
+        self.current_map != Map::Empty
+    }
+
     pub fn update(&mut self, process: &mut IntoProcessInstanceArcBox<'static>, ptrs: &Pointers) {
         let mut map_ptr = 0u64;
 
