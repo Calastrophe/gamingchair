@@ -1,4 +1,7 @@
+use category::Category;
 use egui::{Image, Rgba};
+
+pub mod category;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum Equipment {
@@ -202,5 +205,64 @@ impl Equipment {
         };
 
         Some(Image::new(img_src).bg_fill(Rgba::TRANSPARENT))
+    }
+
+    pub fn category(&self) -> Category {
+        match self {
+            Equipment::AK47
+            | Equipment::M4A4
+            | Equipment::M4A1S
+            | Equipment::AUG
+            | Equipment::FAMAS
+            | Equipment::SG556
+            | Equipment::SSG08
+            | Equipment::AWP
+            | Equipment::Galil
+            | Equipment::M249
+            | Equipment::MAC10
+            | Equipment::P90
+            | Equipment::MP5SD
+            | Equipment::UMP45
+            | Equipment::XM1014
+            | Equipment::Bizon
+            | Equipment::MAG7
+            | Equipment::Negev
+            | Equipment::SawedOff
+            | Equipment::MP7
+            | Equipment::MP9
+            | Equipment::Nova
+            | Equipment::SCAR20
+            | Equipment::G3GS1 => Category::Primary,
+            Equipment::Deagle
+            | Equipment::Glock
+            | Equipment::P2000
+            | Equipment::P250
+            | Equipment::CZ75
+            | Equipment::Revolver
+            | Equipment::Tec9
+            | Equipment::USPS
+            | Equipment::Dualies
+            | Equipment::Fiveseven => Category::Secondary,
+            Equipment::Flashbang
+            | Equipment::HE
+            | Equipment::Smoke
+            | Equipment::Molotov
+            | Equipment::Decoy
+            | Equipment::Incendiary => Category::Utility,
+            Equipment::C4 | Equipment::Zeus => Category::Special,
+            Equipment::Knife | Equipment::Unknown => unreachable!(),
+        }
+    }
+
+    pub fn is_special(&self) -> bool {
+        matches!(self.category(), Category::Special)
+    }
+
+    pub fn is_primary(&self) -> bool {
+        matches!(self.category(), Category::Primary)
+    }
+
+    pub fn is_secondary(&self) -> bool {
+        matches!(self.category(), Category::Secondary)
     }
 }

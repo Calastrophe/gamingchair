@@ -37,16 +37,6 @@ impl eframe::App for Radar {
         //     ui.vertical(|ui| {
         //         ui.label("friendlies");
         //         for friendly in friendlies {
-        //             ui.label(&friendly.name);
-        //             ui.horizontal(|ui| {
-        //                 ui.label(friendly.health.to_string());
-
-        //                 for weapon in &friendly.loadout {
-        //                     if let Some(image) = weapon.image() {
-        //                         ui.image(image.source(ctx));
-        //                     }
-        //                 }
-        //             });
         //         }
 
         //         ui.separator();

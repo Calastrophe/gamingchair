@@ -44,7 +44,10 @@ impl Context {
 
     pub fn update(&mut self) {
         self.ptrs.update(&mut self.process);
-        self.players.update(&mut self.process, &self.ptrs);
         self.information.update(&mut self.process, &self.ptrs);
+
+        if self.information.in_game() {
+            self.players.update(&mut self.process, &self.ptrs);
+        }
     }
 }
