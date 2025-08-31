@@ -14,7 +14,6 @@ use vec3::Vec3;
 mod player;
 pub mod relation;
 pub mod teamid;
-mod util;
 mod vec3;
 
 #[derive(Default, Debug)]

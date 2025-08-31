@@ -104,55 +104,6 @@ impl From<i16> for Equipment {
 }
 
 impl Equipment {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Equipment::Unknown => "",
-            Equipment::Knife => "Knife",
-            Equipment::AK47 => "AK-47",
-            Equipment::AUG => "AUG",
-            Equipment::AWP => "AWP",
-            Equipment::Bizon => "Bizon",
-            Equipment::C4 => "C4",
-            Equipment::CZ75 => "CZ75",
-            Equipment::Deagle => "Deagle",
-            Equipment::Decoy => "Decoy",
-            Equipment::Dualies => "Dualies",
-            Equipment::FAMAS => "FAMAS",
-            Equipment::Fiveseven => "Five-Seven",
-            Equipment::Flashbang => "Flashbang",
-            Equipment::G3GS1 => "G3SG1",
-            Equipment::Galil => "Galil",
-            Equipment::Glock => "Glock",
-            Equipment::HE => "HE",
-            Equipment::Incendiary => "Incendiary",
-            Equipment::M249 => "M249",
-            Equipment::M4A1S => "M4A1-S",
-            Equipment::M4A4 => "M4A4",
-            Equipment::MAC10 => "MAC-10",
-            Equipment::MAG7 => "MAG-7",
-            Equipment::Molotov => "Molotov",
-            Equipment::MP5SD => "MP5-SD",
-            Equipment::MP7 => "MP7",
-            Equipment::MP9 => "MP9",
-            Equipment::Negev => "Negev",
-            Equipment::Nova => "Nova",
-            Equipment::P2000 => "P2000",
-            Equipment::P250 => "P250",
-            Equipment::P90 => "P90",
-            Equipment::Revolver => "Revolver",
-            Equipment::SawedOff => "Sawed-Off",
-            Equipment::SCAR20 => "SCAR-20",
-            Equipment::SG556 => "SG553",
-            Equipment::Smoke => "Smoke",
-            Equipment::SSG08 => "SSG 08",
-            Equipment::Zeus => "Zeus",
-            Equipment::Tec9 => "Tec-9",
-            Equipment::UMP45 => "UMP-45",
-            Equipment::USPS => "USP-S",
-            Equipment::XM1014 => "XM1014",
-        }
-    }
-
     pub fn image(&self) -> Option<Image<'_>> {
         let img_src = match self {
             Equipment::Unknown | Equipment::Knife => return None,
@@ -254,8 +205,8 @@ impl Equipment {
         }
     }
 
-    pub fn is_special(&self) -> bool {
-        matches!(self.category(), Category::Special)
+    pub fn is_sniper(&self) -> bool {
+        matches!(self, Equipment::SSG08 | Equipment::AWP | Equipment::SCAR20)
     }
 
     pub fn is_primary(&self) -> bool {
@@ -264,5 +215,13 @@ impl Equipment {
 
     pub fn is_secondary(&self) -> bool {
         matches!(self.category(), Category::Secondary)
+    }
+
+    pub fn is_utility(&self) -> bool {
+        matches!(self.category(), Category::Utility)
+    }
+
+    pub fn is_special(&self) -> bool {
+        matches!(self.category(), Category::Special)
     }
 }
