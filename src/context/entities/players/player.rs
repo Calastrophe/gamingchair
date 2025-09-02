@@ -1,7 +1,14 @@
-use super::offsets;
-use super::{Equipment, Relation, TeamID, Vec3};
+use super::Equipment;
+use crate::offsets;
 use egui::Color32;
 use memflow::prelude::v1::*;
+use relation::Relation;
+use teamid::TeamID;
+use vec3::Vec3;
+
+pub mod relation;
+pub mod teamid;
+mod vec3;
 
 #[derive(Default, Debug)]
 pub struct Player {

@@ -107,52 +107,54 @@ impl Equipment {
     pub fn image(&self) -> Option<Image<'_>> {
         let img_src = match self {
             Equipment::Unknown | Equipment::Knife => return None,
-            Equipment::AK47 => egui::include_image!("../../assets/equipment/ak47.svg"),
-            Equipment::AUG => egui::include_image!("../../assets/equipment/aug.svg"),
-            Equipment::AWP => egui::include_image!("../../assets/equipment/awp.svg"),
-            Equipment::Bizon => egui::include_image!("../../assets/equipment/bizon.svg"),
-            Equipment::C4 => egui::include_image!("../../assets/equipment/c4.svg"),
-            Equipment::CZ75 => egui::include_image!("../../assets/equipment/cz75a.svg"),
-            Equipment::Deagle => egui::include_image!("../../assets/equipment/deagle.svg"),
-            Equipment::Decoy => egui::include_image!("../../assets/equipment/decoy.svg"),
-            Equipment::FAMAS => egui::include_image!("../../assets/equipment/famas.svg"),
-            Equipment::Fiveseven => egui::include_image!("../../assets/equipment/fiveseven.svg"),
-            Equipment::Flashbang => egui::include_image!("../../assets/equipment/flashbang.svg"),
-            Equipment::G3GS1 => egui::include_image!("../../assets/equipment/g3sg1.svg"),
-            Equipment::Galil => egui::include_image!("../../assets/equipment/galilar.svg"),
-            Equipment::Glock => egui::include_image!("../../assets/equipment/glock.svg"),
-            Equipment::HE => egui::include_image!("../../assets/equipment/hegrenade.svg"),
-            Equipment::Incendiary => egui::include_image!("../../assets/equipment/incgrenade.svg"),
-            Equipment::M249 => egui::include_image!("../../assets/equipment/m249.svg"),
-            Equipment::M4A1S => egui::include_image!("../../assets/equipment/m4a1_silencer.svg"),
-            Equipment::M4A4 => egui::include_image!("../../assets/equipment/m4a1.svg"),
-            Equipment::MAC10 => egui::include_image!("../../assets/equipment/mac10.svg"),
-            Equipment::MAG7 => egui::include_image!("../../assets/equipment/mag7.svg"),
-            Equipment::Molotov => egui::include_image!("../../assets/equipment/molotov.svg"),
-            Equipment::MP5SD => egui::include_image!("../../assets/equipment/mp5sd.svg"),
-            Equipment::MP7 => egui::include_image!("../../assets/equipment/mp7.svg"),
-            Equipment::MP9 => egui::include_image!("../../assets/equipment/mp9.svg"),
-            Equipment::Negev => egui::include_image!("../../assets/equipment/negev.svg"),
-            Equipment::Nova => egui::include_image!("../../assets/equipment/nova.svg"),
-            Equipment::P2000 => egui::include_image!("../../assets/equipment/p2000.svg"),
-            Equipment::P250 => egui::include_image!("../../assets/equipment/p250.svg"),
-            Equipment::P90 => egui::include_image!("../../assets/equipment/p90.svg"),
-            Equipment::Revolver => egui::include_image!("../../assets/equipment/revolver.svg"),
-            Equipment::SawedOff => egui::include_image!("../../assets/equipment/sawedoff.svg"),
-            Equipment::SCAR20 => egui::include_image!("../../assets/equipment/scar20.svg"),
-            Equipment::SG556 => egui::include_image!("../../assets/equipment/sg556.svg"),
+            Equipment::AK47 => egui::include_image!("../../../assets/equipment/ak47.svg"),
+            Equipment::AUG => egui::include_image!("../../../assets/equipment/aug.svg"),
+            Equipment::AWP => egui::include_image!("../../../assets/equipment/awp.svg"),
+            Equipment::Bizon => egui::include_image!("../../../assets/equipment/bizon.svg"),
+            Equipment::C4 => egui::include_image!("../../../assets/equipment/c4.svg"),
+            Equipment::CZ75 => egui::include_image!("../../../assets/equipment/cz75a.svg"),
+            Equipment::Deagle => egui::include_image!("../../../assets/equipment/deagle.svg"),
+            Equipment::Decoy => egui::include_image!("../../../assets/equipment/decoy.svg"),
+            Equipment::FAMAS => egui::include_image!("../../../assets/equipment/famas.svg"),
+            Equipment::Fiveseven => egui::include_image!("../../../assets/equipment/fiveseven.svg"),
+            Equipment::Flashbang => egui::include_image!("../../../assets/equipment/flashbang.svg"),
+            Equipment::G3GS1 => egui::include_image!("../../../assets/equipment/g3sg1.svg"),
+            Equipment::Galil => egui::include_image!("../../../assets/equipment/galilar.svg"),
+            Equipment::Glock => egui::include_image!("../../../assets/equipment/glock.svg"),
+            Equipment::HE => egui::include_image!("../../../assets/equipment/hegrenade.svg"),
+            Equipment::Incendiary => {
+                egui::include_image!("../../../assets/equipment/incgrenade.svg")
+            }
+            Equipment::M249 => egui::include_image!("../../../assets/equipment/m249.svg"),
+            Equipment::M4A1S => egui::include_image!("../../../assets/equipment/m4a1_silencer.svg"),
+            Equipment::M4A4 => egui::include_image!("../../../assets/equipment/m4a1.svg"),
+            Equipment::MAC10 => egui::include_image!("../../../assets/equipment/mac10.svg"),
+            Equipment::MAG7 => egui::include_image!("../../../assets/equipment/mag7.svg"),
+            Equipment::Molotov => egui::include_image!("../../../assets/equipment/molotov.svg"),
+            Equipment::MP5SD => egui::include_image!("../../../assets/equipment/mp5sd.svg"),
+            Equipment::MP7 => egui::include_image!("../../../assets/equipment/mp7.svg"),
+            Equipment::MP9 => egui::include_image!("../../../assets/equipment/mp9.svg"),
+            Equipment::Negev => egui::include_image!("../../../assets/equipment/negev.svg"),
+            Equipment::Nova => egui::include_image!("../../../assets/equipment/nova.svg"),
+            Equipment::P2000 => egui::include_image!("../../../assets/equipment/p2000.svg"),
+            Equipment::P250 => egui::include_image!("../../../assets/equipment/p250.svg"),
+            Equipment::P90 => egui::include_image!("../../../assets/equipment/p90.svg"),
+            Equipment::Revolver => egui::include_image!("../../../assets/equipment/revolver.svg"),
+            Equipment::SawedOff => egui::include_image!("../../../assets/equipment/sawedoff.svg"),
+            Equipment::SCAR20 => egui::include_image!("../../../assets/equipment/scar20.svg"),
+            Equipment::SG556 => egui::include_image!("../../../assets/equipment/sg556.svg"),
             Equipment::Smoke => {
-                egui::include_image!("../../assets/equipment/smokegrenade.svg")
+                egui::include_image!("../../../assets/equipment/smokegrenade.svg")
             }
-            Equipment::SSG08 => egui::include_image!("../../assets/equipment/ssg08.svg"),
-            Equipment::Zeus => egui::include_image!("../../assets/equipment/taser.svg"),
-            Equipment::Tec9 => egui::include_image!("../../assets/equipment/tec9.svg"),
-            Equipment::UMP45 => egui::include_image!("../../assets/equipment/ump45.svg"),
+            Equipment::SSG08 => egui::include_image!("../../../assets/equipment/ssg08.svg"),
+            Equipment::Zeus => egui::include_image!("../../../assets/equipment/taser.svg"),
+            Equipment::Tec9 => egui::include_image!("../../../assets/equipment/tec9.svg"),
+            Equipment::UMP45 => egui::include_image!("../../../assets/equipment/ump45.svg"),
             Equipment::USPS => {
-                egui::include_image!("../../assets/equipment/usp_silencer.svg")
+                egui::include_image!("../../../assets/equipment/usp_silencer.svg")
             }
-            Equipment::XM1014 => egui::include_image!("../../assets/equipment/xm1014.svg"),
-            Equipment::Dualies => egui::include_image!("../../assets/equipment/elite.svg"),
+            Equipment::XM1014 => egui::include_image!("../../../assets/equipment/xm1014.svg"),
+            Equipment::Dualies => egui::include_image!("../../../assets/equipment/elite.svg"),
         };
 
         Some(Image::new(img_src).bg_fill(Rgba::TRANSPARENT))
@@ -200,8 +202,9 @@ impl Equipment {
             | Equipment::Molotov
             | Equipment::Decoy
             | Equipment::Incendiary => Category::Utility,
-            Equipment::C4 | Equipment::Zeus => Category::Special,
-            Equipment::Knife | Equipment::Unknown => unreachable!(),
+            Equipment::C4 | Equipment::Zeus | Equipment::Knife | Equipment::Unknown => {
+                Category::Special
+            }
         }
     }
 

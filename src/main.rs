@@ -24,8 +24,6 @@ fn main() -> eframe::Result {
         .write_style(env_logger::WriteStyle::Always)
         .init();
 
-    color_eyre::install().unwrap();
-
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default().with_min_inner_size([400.0, 400.0]),
         ..Default::default()

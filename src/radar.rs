@@ -56,8 +56,8 @@ impl eframe::App for Radar {
                     let painter = ui.painter();
 
                     self.context
-                        .players
-                        .iter()
+                        .entities
+                        .players()
                         .filter(|p| p.health > 0)
                         .for_each(|player| {
                             // Convert the player's coordinates into map coordinates then scaled by the current image scaling.

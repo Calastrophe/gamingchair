@@ -6,6 +6,13 @@ use memflow::prelude::v1::*;
 
 const CURRENT_MAP_OFFSET: u64 = 0x180;
 
+// TODO:
+//
+// bomb planted,
+// remaining time,
+// being defused,
+// defuse time left,
+// freeze period
 #[derive(Default)]
 pub struct Information {
     pub current_map: Map,
