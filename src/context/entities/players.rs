@@ -39,13 +39,16 @@ impl Players {
         );
         self.local_player.relation = Relation::Local;
 
-        let mut list = [0u64; 64];
+        let mut list_entries = [0u64; 64];
 
         {
             let mut batcher = process.batcher();
-            list.iter_mut().enumerate().for_each(|(idx, entry)| {
-                batcher.read_into(entity_list + ((8 * (idx & 0x7FFF) >> 9) + 16), entry);
-            });
+            list_entries
+                .iter_mut()
+                .enumerate()
+                .for_each(|(idx, entry)| {
+                    batcher.read_into(entity_list + ((8 * (idx & 0x7FFF) >> 9) + 16), entry);
+                });
         }
 
         // Get the player controllers.
@@ -57,15 +60,23 @@ impl Players {
                 .iter_mut()
                 .enumerate()
                 .for_each(|(idx, controller)| {
-                    let list_entry: Address = list[idx].into();
+                    let list_entry: Address = list_entries[idx].into();
                     batcher.read_into(list_entry + 120 * (idx & 0x1FF), controller);
                 });
         }
 
-        let controllers = controllers.map(|c| Address::from(c));
+        let controller_addresses = controllers
+            .iter()
+            .filter_map(|&c| {
+                let controller = Address::from(c);
+                (!controller.is_null()).then_some(controller)
+            })
+            .collect::<Vec<_>>();
+
+        let player_count = controller_addresses.len();
 
         // Get the handle to player pawns.
-        let mut pawn_handles = [0u64; 64];
+        let mut pawn_handles = vec![0u64; player_count];
 
         {
             let mut batcher = process.batcher();
@@ -73,39 +84,39 @@ impl Players {
                 .iter_mut()
                 .enumerate()
                 .for_each(|(idx, handle)| {
-                    batcher.read_into(controllers[idx] + m_hPlayerPawn, handle);
+                    batcher.read_into(controller_addresses[idx] + m_hPlayerPawn, handle);
                 })
         }
 
         // Get the entity list entries based off the pawn handles.
-        let mut entries = [0u64; 64];
+        let mut entries = vec![0u64; player_count];
 
         {
             let mut batcher = process.batcher();
             entries.iter_mut().enumerate().for_each(|(idx, entry)| {
                 batcher.read_into(
-                    entity_list + ((8 * (pawn_handles[idx] & 0x7FFF) >> 9) + 16),
+                    entity_list + (8 * ((pawn_handles[idx] & 0x7FFF) >> 9) + 16),
                     entry,
                 );
             });
         }
 
         // Retrieve the actual pawns.
-        let mut pawns = [0u64; 64];
+        let mut pawns = vec![0u64; player_count];
 
         {
             let mut batcher = process.batcher();
             pawns.iter_mut().enumerate().for_each(|(idx, pawn)| {
                 let list_entry: Address = entries[idx].into();
-                batcher.read_into(list_entry + 120 * (pawn_handles[idx] & 0x1FF), pawn);
+                batcher.read_into(list_entry + (120) * (pawn_handles[idx] & 0x1FF), pawn);
             });
         }
 
-        let pawns = pawns.map(|p| Address::from(p));
+        let pawn_addresses = pawns.iter().map(|p| Address::from(*p)).collect::<Vec<_>>();
 
-        self.other_players = controllers
+        self.other_players = controller_addresses
             .iter()
-            .zip(pawns.iter())
+            .zip(pawn_addresses.iter())
             .filter_map(|(controller, pawn)| {
                 if controller.is_null()
                     || pawn.is_null()

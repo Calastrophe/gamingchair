@@ -5,17 +5,14 @@ use maps::Map;
 use memflow::prelude::v1::*;
 
 const CURRENT_MAP_OFFSET: u64 = 0x180;
+use bomb::Bomb;
 
-// TODO:
-//
-// bomb planted,
-// remaining time,
-// being defused,
-// defuse time left,
-// freeze period
-#[derive(Default)]
+mod bomb;
+
+#[derive(Default, Debug)]
 pub struct Information {
     pub current_map: Map,
+    pub bomb: Bomb,
 }
 
 impl Information {
@@ -28,7 +25,6 @@ impl Information {
 
         let map_address = Address::from(ptrs.global_vars + CURRENT_MAP_OFFSET);
 
-        // TODO: Potential undefined behavior happening?
         let _ = process.read_into(map_address, &mut map_ptr);
 
         let map_name = process
