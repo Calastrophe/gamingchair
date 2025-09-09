@@ -8,6 +8,7 @@ const CIRCLE_RADIUS: f32 = 8.0;
 const MAX_HEALTH: f32 = 100.0;
 const FONT_SIZE: f32 = 9.0;
 const NAME_OFFSET: Vec2 = Vec2::new(0.0, 20.0);
+const BOMB_CARRIER_OFFSET: Vec2 = Vec2::new(0.0, 30.0);
 const CAUTION_OFFSET: Vec2 = Vec2::new(0.0, -25.0);
 const UTILITY_OFFSET: Vec2 = Vec2::new(0.0, -22.0);
 const UTILITY_SIZE: Vec2 = Vec2::new(12.0, 20.0);
@@ -34,14 +35,21 @@ impl eframe::App for Radar {
         self.context.update();
         ctx.request_repaint();
 
+        if !self.context.information.in_game() {
+            egui::CentralPanel::default().show(ctx, |ui| {
+                ui.vertical_centered_justified(|ui| {
+                    ui.add_space(ui.max_rect().height() / 2.0);
+                    ui.spinner();
+                    ui.label("Awaiting a match...");
+                });
+            });
+            return;
+        }
+
         // If enabled, draw the in-game overlay.
 
         // Draw the side panel responsible for showing general economy and loadouts.
-        // egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
-        //     if !self.context.information.in_game() {
-        //         return;
-        //     }
-        // });
+        egui::SidePanel::right("economy_loadout").show(ctx, |ui| {});
 
         egui::CentralPanel::default().show(ctx, |ui| {
             let current_map = self.context.information.current_map;
@@ -118,6 +126,17 @@ impl eframe::App for Radar {
                                 FontId::monospace(FONT_SIZE),
                                 Color32::WHITE,
                             );
+
+                            // Display an indicator if the player is the bomb carrier.
+                            if player.is_bomb_carrier {
+                                painter.text(
+                                    position + BOMB_CARRIER_OFFSET,
+                                    Align2::CENTER_CENTER,
+                                    "[C4]",
+                                    FontId::monospace(FONT_SIZE),
+                                    Color32::ORANGE,
+                                );
+                            }
 
                             // Caution opposing enemy players with snipers!
                             if player.is_enemy() && player.current_weapon.is_sniper() {

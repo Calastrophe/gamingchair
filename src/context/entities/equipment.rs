@@ -106,7 +106,8 @@ impl From<i16> for Equipment {
 impl Equipment {
     pub fn image(&self) -> Option<Image<'_>> {
         let img_src = match self {
-            Equipment::Unknown | Equipment::Knife => return None,
+            Equipment::Unknown => return None,
+            Equipment::Knife => egui::include_image!("../../../assets/equipment/knife.svg"),
             Equipment::AK47 => egui::include_image!("../../../assets/equipment/ak47.svg"),
             Equipment::AUG => egui::include_image!("../../../assets/equipment/aug.svg"),
             Equipment::AWP => egui::include_image!("../../../assets/equipment/awp.svg"),

@@ -24,6 +24,7 @@ pub struct Player {
     pub current_weapon: Equipment,
     pub loadout: Vec<Equipment>,
     pub is_scoped: bool,
+    pub is_bomb_carrier: bool,
 }
 
 impl Player {
@@ -46,6 +47,124 @@ impl Player {
             Relation::Teammate => Color32::BLUE,
             Relation::Local => Color32::GREEN,
         }
+    }
+
+    fn read_current_weapon(
+        &mut self,
+        process: &mut IntoProcessInstanceArcBox<'static>,
+        clipping_weapon: Address,
+    ) {
+        let weapon_idx_address = clipping_weapon
+            + offsets::client::C_EconEntity::m_AttributeManager
+            + offsets::client::C_AttributeContainer::m_Item
+            + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+
+        let item_idx: i16 = process.read(weapon_idx_address).unwrap_or_default();
+
+        self.current_weapon = Equipment::from(item_idx);
+    }
+
+    fn read_loadout(
+        &mut self,
+        process: &mut IntoProcessInstanceArcBox<'static>,
+        weapon_services: Address,
+        entity_list: Address,
+    ) {
+        let mut weapon_count = 0i32;
+        let mut weapons_ptr = 0u64;
+
+        {
+            let mut batcher = process.batcher();
+            batcher.read_into(
+                weapon_services + offsets::client::CPlayer_WeaponServices::m_hMyWeapons,
+                &mut weapon_count,
+            );
+            batcher.read_into(
+                weapon_services + offsets::client::CPlayer_WeaponServices::m_hMyWeapons + 0x8,
+                &mut weapons_ptr,
+            );
+        }
+
+        let weapon_count = weapon_count.clamp(0, 32) as usize;
+        let weapons_address = Address::from(weapons_ptr);
+        let mut weapon_handles = vec![0u64; weapon_count];
+
+        // Iterate over each expected weapon and read their respective handle.
+        {
+            let mut batcher = process.batcher();
+            weapon_handles
+                .iter_mut()
+                .enumerate()
+                .for_each(|(idx, handle)| {
+                    batcher.read_into(weapons_address + (idx * 0x4), handle);
+                });
+        }
+
+        let mut list_entries = vec![0u64; weapon_count];
+
+        // From the handles, read the respective list entries in the entity list.
+        {
+            let mut batcher = process.batcher();
+            list_entries
+                .iter_mut()
+                .zip(&weapon_handles)
+                .for_each(|(list_entry, weapon_handle)| {
+                    batcher.read_into(
+                        entity_list + 0x8 * ((weapon_handle & 0x7FFF) >> 9) + 16,
+                        list_entry,
+                    );
+                });
+        }
+
+        // From the entries and weapon handles, read the actual weapon entities.
+        {
+            let mut batcher = process.batcher();
+            list_entries
+                .iter_mut()
+                .zip(&weapon_handles)
+                .for_each(|(entry, weapon_handle)| {
+                    let address = Address::from(*entry + 120 * (weapon_handle & 0x1FF));
+                    batcher.read_into(address, entry);
+                });
+        }
+
+        let mut weapon_idxs = vec![0i16; weapon_count];
+
+        // From the weapon entities, read the item definition indices.
+        {
+            let mut batcher = process.batcher();
+            list_entries
+                .iter()
+                .zip(&mut weapon_idxs)
+                .for_each(|(weapon, weapon_idx)| {
+                    let weapon_address = Address::from(*weapon);
+
+                    let weapon_idx_address = weapon_address
+                        + offsets::client::C_EconEntity::m_AttributeManager
+                        + offsets::client::C_AttributeContainer::m_Item
+                        + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+
+                    batcher.read_into(weapon_idx_address, weapon_idx);
+                })
+        }
+
+        // Convert the item definition indices into actual equipment variants.
+        self.loadout = weapon_idxs
+            .iter()
+            .filter_map(|weapon_idx| {
+                let weapon = Equipment::from(*weapon_idx);
+
+                // If they are holding the bomb in their loadout, indicate that.
+                if weapon == Equipment::C4 {
+                    self.is_bomb_carrier = true;
+                }
+
+                (weapon != Equipment::Unknown).then(|| weapon)
+            })
+            .collect();
+
+        // Sort the loadout by equipment categories.
+        self.loadout.sort_by(|a, b| a.category().cmp(&b.category()));
     }
 
     pub fn read(
@@ -103,126 +222,27 @@ impl Player {
             );
         }
 
-        let (
-            money_services_address,
-            player_name_address,
-            clipping_weapon_address,
-            weapon_services_address,
-        ) = (
+        let (money_services, player_name, clipping_weapon, weapon_services) = (
             Address::from(money_services_ptr),
             Address::from(player_name_ptr),
             Address::from(clipping_weapon_ptr),
             Address::from(weapon_services_ptr),
         );
 
+        // Read the player's current money.
         player.money = process
             .read(
-                money_services_address
+                money_services
                     + offsets::client::CCSPlayerController_InGameMoneyServices::m_iAccount,
             )
             .unwrap_or_default();
 
-        player.name = process
-            .read_utf8_lossy(player_name_address, 32)
-            .unwrap_or_default();
+        // Read the player's name.
+        player.name = process.read_utf8_lossy(player_name, 32).unwrap_or_default();
 
-        let item_idx_addr = clipping_weapon_address
-            + offsets::client::C_EconEntity::m_AttributeManager
-            + offsets::client::C_AttributeContainer::m_Item
-            + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
+        player.read_current_weapon(process, clipping_weapon);
 
-        let item_idx: i16 = process.read(item_idx_addr).unwrap_or_default();
-
-        player.current_weapon = Equipment::from(item_idx);
-
-        let mut weapon_count = 0i32;
-        let mut weapons_base_ptr = 0u64;
-
-        {
-            let mut batcher = process.batcher();
-            batcher.read_into(
-                weapon_services_address + offsets::client::CPlayer_WeaponServices::m_hMyWeapons,
-                &mut weapon_count,
-            );
-            batcher.read_into(
-                weapon_services_address
-                    + offsets::client::CPlayer_WeaponServices::m_hMyWeapons
-                    + 0x8,
-                &mut weapons_base_ptr,
-            );
-        }
-
-        let weapon_count = weapon_count.clamp(0, 32) as usize;
-        let weapons_base_address = Address::from(weapons_base_ptr);
-        let mut weapon_handles = vec![0u64; weapon_count];
-
-        {
-            let mut batcher = process.batcher();
-            weapon_handles
-                .iter_mut()
-                .enumerate()
-                .for_each(|(idx, handle)| {
-                    batcher.read_into(weapons_base_address + (idx * 0x4), handle);
-                });
-        }
-
-        let mut list_entries = vec![0u64; weapon_count];
-
-        {
-            let mut batcher = process.batcher();
-            list_entries
-                .iter_mut()
-                .zip(&weapon_handles)
-                .for_each(|(list_entry, weapon_handle)| {
-                    batcher.read_into(
-                        entity_list + 0x8 * ((weapon_handle & 0x7FFF) >> 9) + 16,
-                        list_entry,
-                    );
-                });
-        }
-
-        {
-            let mut batcher = process.batcher();
-            list_entries
-                .iter_mut()
-                .zip(&weapon_handles)
-                .for_each(|(entry, weapon_handle)| {
-                    let address = Address::from(*entry + 120 * (weapon_handle & 0x1FF));
-                    batcher.read_into(address, entry);
-                });
-        }
-
-        let weapons = list_entries;
-        let mut weapon_idxs = vec![0i16; weapon_count];
-        {
-            let mut batcher = process.batcher();
-            weapons
-                .iter()
-                .zip(&mut weapon_idxs)
-                .for_each(|(weapon, weapon_idx)| {
-                    let weapon_address = Address::from(*weapon);
-
-                    let weapon_idx_address = weapon_address
-                        + offsets::client::C_EconEntity::m_AttributeManager
-                        + offsets::client::C_AttributeContainer::m_Item
-                        + offsets::client::C_EconItemView::m_iItemDefinitionIndex;
-
-                    batcher.read_into(weapon_idx_address, weapon_idx);
-                })
-        }
-
-        player.loadout = weapon_idxs
-            .iter()
-            .filter_map(|weapon_idx| {
-                let weapon = Equipment::from(*weapon_idx);
-
-                if matches!(weapon, Equipment::Unknown | Equipment::Knife) {
-                    None
-                } else {
-                    Some(weapon)
-                }
-            })
-            .collect();
+        player.read_loadout(process, weapon_services, entity_list);
 
         player.is_scoped = is_scoped != 0;
         player.team_id = TeamID::from(team);
