@@ -14,7 +14,8 @@ mod vec3;
 pub struct Player {
     pub controller: Address,
     pub pawn: Address,
-    pub health: u32,
+    pub health: i32,
+    pub armor: i32,
     pub name: String,
     pub money: i32,
     pub team_id: TeamID,
@@ -47,6 +48,10 @@ impl Player {
             Relation::Teammate => Color32::BLUE,
             Relation::Local => Color32::GREEN,
         }
+    }
+
+    pub fn partitioned_loadout(&self) -> (Vec<&Equipment>, Vec<&Equipment>) {
+        self.loadout.iter().partition(|weapon| !weapon.is_utility())
     }
 
     fn read_current_weapon(
@@ -159,7 +164,11 @@ impl Player {
                     self.is_bomb_carrier = true;
                 }
 
-                (weapon != Equipment::Unknown).then(|| weapon)
+                if matches!(weapon, Equipment::Unknown | Equipment::Knife) {
+                    None
+                } else {
+                    Some(weapon)
+                }
             })
             .collect();
 
@@ -195,6 +204,10 @@ impl Player {
             batcher.read_into(
                 pawn + offsets::client::C_BaseEntity::m_iHealth,
                 &mut player.health,
+            );
+            batcher.read_into(
+                pawn + offsets::client::C_CSPlayerPawn::m_ArmorValue,
+                &mut player.armor,
             );
             batcher.read_into(
                 pawn + offsets::client::C_CSPlayerPawn::m_bIsScoped,

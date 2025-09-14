@@ -127,14 +127,15 @@ impl Players {
                     Some(Player::read(process, *controller, *pawn, entity_list))
                 }
             })
-            .map(|mut player| {
+            .filter_map(|mut player| {
                 player.relation = match player.team_id {
-                    TeamID::Unknown => Relation::Unknown,
+                    TeamID::Unknown => return None,
                     TeamID::Spectator => Relation::Spectator,
                     _ if self.local_player.team_id == player.team_id => Relation::Teammate,
                     _ => Relation::Enemy,
                 };
-                player
+
+                Some(player)
             })
             .collect();
     }
