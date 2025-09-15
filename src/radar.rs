@@ -1,5 +1,5 @@
 use crate::Context;
-use egui::{Align2, Color32, FontId, Layout, Pos2, Rect, Stroke, Vec2};
+use egui::{Align2, Color32, CornerRadius, FontId, Layout, Pos2, ProgressBar, Rect, Stroke, Vec2};
 
 const ACTUAL_IMAGE_SIZE: f32 = 1024.0;
 const SIGHT_LINE_LENGTH: f32 = 14.0;
@@ -13,7 +13,6 @@ const CAUTION_OFFSET: Vec2 = Vec2::new(0.0, -25.0);
 const UTILITY_OFFSET: Vec2 = Vec2::new(0.0, -22.0);
 const UTILITY_SIZE: Vec2 = Vec2::new(12.0, 20.0);
 
-mod overlay;
 mod util;
 
 pub struct Radar {
@@ -110,7 +109,41 @@ impl eframe::App for Radar {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            let current_map = self.context.information.current_map;
+            let current_map = &self.context.information.current_map;
+            let bomb = &self.context.information.bomb;
+
+            if bomb.is_planted {
+                // Determine which fuse we need to draw based on if we are defusing or not.
+                let (timestamp, length, color) = if bomb.is_defusing {
+                    (
+                        bomb.defuse_stamp.unwrap(),
+                        bomb.defuse_length,
+                        Color32::BLUE,
+                    )
+                } else {
+                    (bomb.fuse_stamp.unwrap(), bomb.fuse_length, Color32::ORANGE)
+                };
+
+                let elapsed = timestamp.elapsed().as_secs_f32();
+                let remaining = (length - elapsed).max(0.0);
+                let percentage = (remaining / length).clamp(0.0, 1.0);
+
+                // We use the response to determine where to draw the text.
+                let resp = ui.add(
+                    ProgressBar::new(percentage)
+                        .corner_radius(CornerRadius::same(3))
+                        .fill(color),
+                );
+
+                // Draw a centered text of the remaining seconds on the fuse.
+                ui.painter().text(
+                    resp.rect.center(),
+                    Align2::CENTER_CENTER,
+                    format!("{:.1}s", remaining),
+                    FontId::monospace(FONT_SIZE),
+                    Color32::WHITE,
+                );
+            }
 
             if let Some(image) = current_map.image() {
                 let scene = egui::Scene::new().zoom_range(0.5..=2.5);

@@ -32,5 +32,7 @@ impl Information {
             .unwrap_or_default();
 
         self.current_map = Map::from(map_name.as_str());
+
+        self.bomb.update(process, ptrs);
     }
 }
