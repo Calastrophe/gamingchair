@@ -7,6 +7,7 @@ mod radar;
 
 use clap::Parser;
 use context::Context;
+use egui::{Style, Visuals};
 use memflow::prelude::v1::*;
 
 #[derive(Parser, Debug)]
@@ -50,6 +51,11 @@ fn main() -> eframe::Result {
         "radar",
         native_options,
         Box::new(|cc| {
+            let style = Style {
+                visuals: Visuals::dark(),
+                ..Default::default()
+            };
+            cc.egui_ctx.set_style(style);
             egui_extras::install_image_loaders(&cc.egui_ctx);
             Ok(Box::new(Radar::new(context)))
         }),

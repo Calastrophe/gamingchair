@@ -49,14 +49,12 @@ impl eframe::App for Radar {
         egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 let (friendlies, enemies) = self.context.entities.sides();
-                let midpoint = friendlies.len() - 1;
 
                 friendlies
                     .iter()
                     .chain(enemies.iter())
-                    .enumerate()
-                    .filter(|(_, player)| player.health > 0)
-                    .for_each(|(idx, player)| {
+                    .filter(|player| player.health > 0)
+                    .for_each(|player| {
                         ui.label(&player.name);
 
                         ui.add_space(5.0);
@@ -100,10 +98,6 @@ impl eframe::App for Radar {
                         });
 
                         ui.add_space(5.0);
-
-                        if idx == midpoint {
-                            ui.separator();
-                        }
                     });
             });
         });
