@@ -1,5 +1,5 @@
 use crate::Context;
-use egui::{Align2, Color32, FontId, Layout, Pos2, Rect, Separator, Stroke, Vec2};
+use egui::{Align2, Color32, FontId, Layout, Pos2, Rect, Stroke, Vec2};
 
 const ACTUAL_IMAGE_SIZE: f32 = 1024.0;
 const SIGHT_LINE_LENGTH: f32 = 14.0;
@@ -46,52 +46,66 @@ impl eframe::App for Radar {
             return;
         }
 
-        // If enabled, draw the in-game overlay.
-
         // Draw the side panel responsible for showing general economy and loadouts.
         egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
-            let (friendlies, enemies) = self.context.entities.sides();
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                let (friendlies, enemies) = self.context.entities.sides();
+                let midpoint = friendlies.len() - 1;
 
-            friendlies.iter().chain(enemies.iter()).for_each(|player| {
-                ui.with_layout(Layout::right_to_left(egui::Align::Min), |ui| {
-                    ui.label(&player.name);
-                });
+                friendlies
+                    .iter()
+                    .chain(enemies.iter())
+                    .enumerate()
+                    .filter(|(_, player)| player.health > 0)
+                    .for_each(|(idx, player)| {
+                        ui.label(&player.name);
 
-                ui.add_space(5.0);
-
-                ui.horizontal(|ui| {
-                    ui.image(egui::include_image!("../assets/icons/health.svg"));
-                    ui.label(player.health.to_string());
-                    ui.add_space(5.0);
-                    ui.image(egui::include_image!("../assets/icons/armor.svg"));
-                    ui.label(player.armor.to_string());
-
-                    ui.with_layout(Layout::right_to_left(egui::Align::Min), |ui| {
-                        ui.colored_label(Color32::GREEN, format!("${}", player.money));
-                    });
-                });
-
-                ui.add_space(5.0);
-
-                let (weapons, utilities) = player.partitioned_loadout();
-                ui.horizontal(|ui| {
-                    for weapon in weapons {
-                        if let Some(image) = weapon.image() {
-                            ui.image(image.source(ctx));
-                        }
-                    }
-                });
-
-                ui.horizontal(|ui| {
-                    for utility in utilities {
-                        if let Some(image) = utility.image() {
-                            ui.image(image.source(ctx));
-                        }
                         ui.add_space(5.0);
-                    }
-                });
 
-                ui.add_space(5.0);
+                        // Draw their health, armor, and money all on a single line.
+                        ui.horizontal(|ui| {
+                            ui.image(egui::include_image!("../assets/icons/health.svg"));
+                            ui.label(player.health.to_string());
+                            ui.add_space(5.0);
+                            ui.image(egui::include_image!("../assets/icons/armor.svg"));
+                            ui.label(player.armor.to_string());
+
+                            ui.with_layout(Layout::right_to_left(egui::Align::Min), |ui| {
+                                ui.colored_label(Color32::GREEN, format!("${}", player.money));
+                            });
+                        });
+
+                        ui.add_space(5.0);
+
+                        // Grab the loadout and partition weapons and utility.
+                        let (weapons, utilities) = player.partitioned_loadout();
+
+                        // Draw separate horizontal components for weapons and utility images.
+                        ui.horizontal(|ui| {
+                            weapons
+                                .iter()
+                                .filter_map(|weapon| weapon.image())
+                                .for_each(|image| {
+                                    ui.image(image.source(ctx));
+                                });
+                        });
+
+                        ui.horizontal(|ui| {
+                            utilities
+                                .iter()
+                                .filter_map(|utility| utility.image())
+                                .for_each(|image| {
+                                    ui.image(image.source(ctx));
+                                    ui.add_space(5.0);
+                                });
+                        });
+
+                        ui.add_space(5.0);
+
+                        if idx == midpoint {
+                            ui.separator();
+                        }
+                    });
             });
         });
 
