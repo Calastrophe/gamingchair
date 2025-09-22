@@ -16,7 +16,7 @@ For example, `cargo run --release -- --connector winio`.
 
 ### Features & Preview
 
-The map can be moved around and zoomed in/out of and the loadout bar is scrollable and adjustable.
+The map can be moved around and zoomed in and out of and responds well to various resolutions.
 
 Additionally, there is a bar that appears when the bomb is planted along with being defused and their respective fuses are displayed.
 
@@ -25,4 +25,3 @@ It will also draw an exclamation mark above a player holding a sniper rifle and 
 Lastly, it will draw an image of the utility that a player is holding above their head.
 
 <img width="1261" height="935" alt="image" src="https://github.com/user-attachments/assets/4a4291f6-5e42-4595-856d-07a4d7be0772" />
-
