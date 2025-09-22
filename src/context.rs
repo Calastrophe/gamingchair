@@ -4,8 +4,8 @@ use information::Information;
 use memflow::prelude::v1::*;
 use pointers::Pointers;
 
-mod entities;
-mod information;
+pub mod entities;
+pub mod information;
 mod pointers;
 
 pub struct Context {

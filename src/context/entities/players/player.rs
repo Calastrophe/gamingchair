@@ -15,7 +15,6 @@ pub struct Player {
     pub controller: Address,
     pub pawn: Address,
     pub health: i32,
-    pub armor: i32,
     pub name: String,
     pub money: i32,
     pub team_id: TeamID,
@@ -26,6 +25,8 @@ pub struct Player {
     pub loadout: Vec<Equipment>,
     pub is_scoped: bool,
     pub is_bomb_carrier: bool,
+    pub has_defuser: bool,
+    pub has_helmet: bool,
 }
 
 impl Player {
@@ -48,10 +49,6 @@ impl Player {
             Relation::Teammate => Color32::BLUE,
             Relation::Local => Color32::GREEN,
         }
-    }
-
-    pub fn partitioned_loadout(&self) -> (Vec<&Equipment>, Vec<&Equipment>) {
-        self.loadout.iter().partition(|weapon| !weapon.is_utility())
     }
 
     fn read_current_weapon(
@@ -185,6 +182,8 @@ impl Player {
         let mut player = Player::new(controller, pawn);
         let mut team = 0i32;
         let mut is_scoped = 0u8;
+        let mut has_defuser = 0u8;
+        let mut has_helmet = 0u8;
         let mut clipping_weapon_ptr = 0u64;
         let mut money_services_ptr = 0u64;
         let mut weapon_services_ptr = 0u64;
@@ -206,10 +205,6 @@ impl Player {
                 &mut player.health,
             );
             batcher.read_into(
-                pawn + offsets::client::C_CSPlayerPawn::m_ArmorValue,
-                &mut player.armor,
-            );
-            batcher.read_into(
                 pawn + offsets::client::C_CSPlayerPawn::m_bIsScoped,
                 &mut is_scoped,
             );
@@ -220,6 +215,14 @@ impl Player {
             batcher.read_into(
                 pawn + offsets::client::C_BasePlayerPawn::m_pWeaponServices,
                 &mut weapon_services_ptr,
+            );
+            batcher.read_into(
+                controller + offsets::client::CCSPlayerController::m_bPawnHasDefuser,
+                &mut has_defuser,
+            );
+            batcher.read_into(
+                controller + offsets::client::CCSPlayerController::m_bPawnHasHelmet,
+                &mut has_helmet,
             );
             batcher.read_into(
                 controller + offsets::client::CCSPlayerController::m_pInGameMoneyServices,
@@ -258,6 +261,8 @@ impl Player {
         player.read_loadout(process, weapon_services, entity_list);
 
         player.is_scoped = is_scoped != 0;
+        player.has_defuser = has_defuser != 0;
+        player.has_helmet = has_helmet != 0;
         player.team_id = TeamID::from(team);
         player
     }

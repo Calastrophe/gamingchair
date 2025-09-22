@@ -1,5 +1,8 @@
-use crate::Context;
-use egui::{Align2, Color32, CornerRadius, FontId, Layout, Pos2, ProgressBar, Rect, Stroke, Vec2};
+use crate::{Context, context::entities::players::player::Player};
+use egui::{
+    Align, Align2, Color32, CornerRadius, FontId, Layout, Pos2, ProgressBar, Rect, Stroke,
+    TextWrapMode, Vec2,
+};
 
 const ACTUAL_IMAGE_SIZE: f32 = 1024.0;
 const SIGHT_LINE_LENGTH: f32 = 14.0;
@@ -46,61 +49,114 @@ impl eframe::App for Radar {
         }
 
         // Draw the side panel responsible for showing general economy and loadouts.
-        egui::SidePanel::right("economy_loadout").show(ctx, |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui| {
+        egui::TopBottomPanel::top("scoreboard_economy")
+            .show_separator_line(false)
+            .show(ctx, |ui| {
                 let (friendlies, enemies) = self.context.entities.sides();
+                let available_size = ui.available_size();
+                let width = available_size.x;
+                let height = available_size.y;
+                let info_width = width * 0.45;
+                let scoreboard_width = width * 0.1;
+                let player_width = info_width / 5.0;
 
-                friendlies
-                    .iter()
-                    .chain(enemies.iter())
-                    .filter(|player| player.health > 0)
-                    .for_each(|player| {
-                        ui.label(&player.name);
+                let draw_info = |ui: &mut egui::Ui, player: &Player| {
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(player_width, height),
+                        Layout::top_down(Align::Center),
+                        |ui| {
+                            ui.colored_label(Color32::WHITE, &player.name);
 
-                        ui.add_space(5.0);
+                            // A straight bar to indicate remaining health.
+                            ui.add(
+                                ProgressBar::new(player.health as f32 / MAX_HEALTH)
+                                    .fill(Color32::WHITE)
+                                    .corner_radius(CornerRadius::same(0))
+                                    .desired_height(3.0)
+                                    .desired_width(player_width * 0.925),
+                            );
 
-                        // Draw their health, armor, and money all on a single line.
-                        ui.horizontal(|ui| {
-                            ui.image(egui::include_image!("../assets/icons/health.svg"));
-                            ui.label(player.health.to_string());
-                            ui.add_space(5.0);
-                            ui.image(egui::include_image!("../assets/icons/armor.svg"));
-                            ui.label(player.armor.to_string());
+                            ui.horizontal(|ui| {
+                                // TODO: Make this helmet the same size as the defuser image.
+                                ui.add_enabled_ui(player.has_helmet, |ui| {
+                                    ui.image(egui::include_image!("../assets/icons/helmet.svg"));
+                                });
 
-                            ui.with_layout(Layout::right_to_left(egui::Align::Min), |ui| {
-                                ui.colored_label(Color32::GREEN, format!("${}", player.money));
+                                ui.add_enabled_ui(player.has_defuser, |ui| {
+                                    ui.image(egui::include_image!("../assets/icons/defuser.svg"));
+                                });
+
+                                ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
+                                    ui.colored_label(Color32::GREEN, player.money.to_string());
+                                });
                             });
-                        });
 
-                        ui.add_space(5.0);
+                            ui.horizontal(|ui| {
+                                // We need spacing between the images.
+                                ui.spacing_mut().item_spacing.x = 5.0;
 
-                        // Grab the loadout and partition weapons and utility.
-                        let (weapons, utilities) = player.partitioned_loadout();
+                                // NOTE: Small spacing added to make the weapon's visually align better.
+                                ui.add_space(5.0);
 
-                        // Draw separate horizontal components for weapons and utility images.
-                        ui.horizontal(|ui| {
-                            weapons
-                                .iter()
-                                .filter_map(|weapon| weapon.image())
-                                .for_each(|image| {
-                                    ui.image(image.source(ctx));
-                                });
-                        });
+                                player
+                                    .loadout
+                                    .iter()
+                                    .scan(false, |has_primary, weapon| {
+                                        if weapon.is_primary() {
+                                            *has_primary = true;
+                                        }
+                                        if *has_primary && weapon.is_secondary() {
+                                            None
+                                        } else {
+                                            weapon.image()
+                                        }
+                                    })
+                                    .for_each(|image| {
+                                        ui.image(image.source(ctx));
+                                    });
+                            });
+                        },
+                    );
+                };
 
-                        ui.horizontal(|ui| {
-                            utilities
-                                .iter()
-                                .filter_map(|utility| utility.image())
-                                .for_each(|image| {
-                                    ui.image(image.source(ctx));
-                                    ui.add_space(5.0);
-                                });
-                        });
+                ui.horizontal(|ui| {
+                    // By overwriting spacing, we prevent inaccurate math since we calculated our own bounds.
+                    ui.spacing_mut().item_spacing.x = 0.0;
+                    ui.style_mut().wrap_mode = Some(TextWrapMode::Truncate);
 
-                        ui.add_space(5.0);
-                    });
+                    // We allocate areas for information about each team's economy and loadout.
+                    // Additionally, the middle part is reserved for the future scoreboard.
+
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(info_width, height),
+                        Layout::left_to_right(Align::Center),
+                        |ui| {
+                            friendlies.iter().take(5).for_each(|player| {
+                                draw_info(ui, player);
+                            });
+                        },
+                    );
+
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(scoreboard_width, height),
+                        Layout::top_down(Align::Center),
+                        |ui| {
+                            // TODO: Placeholder for scoreboard and alive information.
+                            ui.allocate_space(Vec2::new(scoreboard_width, height));
+                        },
+                    );
+
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(info_width, height),
+                        Layout::right_to_left(Align::Center),
+                        |ui| {
+                            enemies.iter().take(5).for_each(|player| {
+                                draw_info(ui, player);
+                            });
+                        },
+                    );
+                });
             });
-        });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             let current_map = &self.context.information.current_map;

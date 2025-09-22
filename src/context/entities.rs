@@ -3,8 +3,8 @@ use memflow::prelude::v1::*;
 
 use players::{Players, player::Player};
 
-mod equipment;
-mod players;
+pub mod equipment;
+pub mod players;
 
 #[derive(Default, Debug)]
 pub struct Entities {
