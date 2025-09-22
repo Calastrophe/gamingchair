@@ -51,6 +51,7 @@ impl eframe::App for Radar {
         // Draw the side panel responsible for showing general economy and loadouts.
         egui::TopBottomPanel::top("scoreboard_economy")
             .show_separator_line(false)
+            .exact_height(80.0)
             .show(ctx, |ui| {
                 let (friendlies, enemies) = self.context.entities.sides();
                 let available_size = ui.available_size();
