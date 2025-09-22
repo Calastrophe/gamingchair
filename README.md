@@ -24,4 +24,5 @@ It will also draw an exclamation mark above a player holding a sniper rifle and 
 
 Lastly, it will draw an image of the utility that a player is holding above their head.
 
-<img width="1713" height="1168" alt="preview" src="https://github.com/user-attachments/assets/22eac717-4426-4792-83db-5a6317c2c812" />
+<img width="1261" height="935" alt="image" src="https://github.com/user-attachments/assets/4a4291f6-5e42-4595-856d-07a4d7be0772" />
+
