@@ -112,7 +112,10 @@ impl Players {
             });
         }
 
-        let pawn_addresses = pawns.iter().map(|p| Address::from(*p)).collect::<Vec<_>>();
+        let pawn_addresses = pawns
+            .into_iter()
+            .map(|p| Address::from(p))
+            .collect::<Vec<_>>();
 
         self.other_players = controller_addresses
             .iter()
