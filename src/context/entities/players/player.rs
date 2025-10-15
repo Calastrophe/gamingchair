@@ -125,7 +125,7 @@ impl Player {
                 .iter_mut()
                 .zip(&weapon_handles)
                 .for_each(|(entry, weapon_handle)| {
-                    let address = Address::from(*entry + 120 * (weapon_handle & 0x1FF));
+                    let address = Address::from(*entry + 112 * (weapon_handle & 0x1FF));
                     batcher.read_into(address, entry);
                 });
         }

@@ -1,5 +1,5 @@
 // Generated using https://github.com/a2x/cs2-dumper
-// 2025-09-28 06:25:12.278309200 UTC
+// 2025-10-15 07:57:14.019189300 UTC
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, unused)]
 
@@ -7,25 +7,8 @@ pub mod cs2_dumper {
     pub mod schemas {
         // Module: engine2.dll
         // Class count: 48
-        // Enum count: 2
+        // Enum count: 18
         pub mod engine2_dll {
-            // Alignment: 4
-            // Member count: 3
-            #[repr(u32)]
-            pub enum EntityDormancyType_t {
-                ENTITY_NOT_DORMANT = 0x0,
-                ENTITY_DORMANT = 0x1,
-                ENTITY_SUSPENDED = 0x2
-            }
-            // Alignment: 4
-            // Member count: 4
-            #[repr(u32)]
-            pub enum EntityIOTargetType_t {
-                ENTITY_IO_TARGET_INVALID = u32::MAX,
-                ENTITY_IO_TARGET_ENTITYNAME = 0x2,
-                ENTITY_IO_TARGET_EHANDLE = 0x6,
-                ENTITY_IO_TARGET_ENTITYNAME_OR_CLASSNAME = 0x7
-            }
             // Parent: None
             // Field count: 0
             pub mod EventClientPostSimulate_t {

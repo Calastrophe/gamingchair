@@ -61,7 +61,7 @@ impl Players {
                 .enumerate()
                 .for_each(|(idx, controller)| {
                     let list_entry: Address = list_entries[idx].into();
-                    batcher.read_into(list_entry + 120 * (idx & 0x1FF), controller);
+                    batcher.read_into(list_entry + 112 * (idx & 0x1FF), controller);
                 });
         }
 
@@ -108,7 +108,7 @@ impl Players {
             let mut batcher = process.batcher();
             pawns.iter_mut().enumerate().for_each(|(idx, pawn)| {
                 let list_entry: Address = entries[idx].into();
-                batcher.read_into(list_entry + (120) * (pawn_handles[idx] & 0x1FF), pawn);
+                batcher.read_into(list_entry + (112) * (pawn_handles[idx] & 0x1FF), pawn);
             });
         }
 
